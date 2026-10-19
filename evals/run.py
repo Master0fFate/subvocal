@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
-"""Run the steno eval: thinking tokens, accuracy, and an unchanged reply.
+"""Run the subvocal eval: thinking tokens, accuracy, and an unchanged reply.
 
 Every prompt runs once per arm (and per --runs). Arms:
 
   baseline     no addition to the system prompt
   control      "Keep your internal reasoning concise." The honest comparison:
-               what steno adds on top of simply asking for brevity
-  lite         the steno-lite ruleset as the hooks inject it
-  steno        the strict ruleset the SessionStart hook injects, plus the
+               what subvocal adds on top of simply asking for brevity
+  lite         the subvocal-lite ruleset as the hooks inject it
+  subvocal        the strict ruleset the SessionStart hook injects, plus the
                per-turn reminder the prompt hook adds
-  ultrasteno   same, for the ultrasteno mode
+  ultrasubvocal   same, for the ultrasubvocal mode
 
 Two prompt sets:
 
   prompts/tasks.jsonl  questions with a checkable final answer. Measures
                        thinking tokens and accuracy.
+  prompts/hard.jsonl   the same, multi-step: the model thinks for hundreds to
+                       thousands of tokens, the regime subvocal targets.
   prompts/open.jsonl   ordinary requests with no single answer. Measures that
                        the reply is unchanged: its length, its language (one
-                       prompt is Croatian), and leaks of steno notation.
+                       prompt is Croatian), and leaks of subvocal notation.
 
 Backends:
 
@@ -59,7 +61,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 BASE_SYSTEM = "You are Claude, a helpful assistant."
 CONTROL = "Keep your internal reasoning concise. Your reply is unaffected: write it as you normally would."
-ARMS = ["baseline", "control", "lite", "steno", "ultrasteno"]
+ARMS = ["baseline", "control", "lite", "subvocal", "ultrasubvocal"]
 
 
 # --------------------------------------------------------------------------
@@ -71,7 +73,7 @@ def hook_text(mode: str) -> str:
           "process.stdout.write(c.buildRuleset(process.argv[2],process.argv[3])+(r?'\\n\\n'+r:''))")
     hooks = REPO / "src" / "hooks"
     env = {k: v for k, v in os.environ.items() if k != "CLAUDE_PLUGIN_ROOT"}
-    out = subprocess.run(["node", "-e", js, str(hooks / "steno-config.js"), mode, str(hooks)],
+    out = subprocess.run(["node", "-e", js, str(hooks / "subvocal-config.js"), mode, str(hooks)],
                          capture_output=True, text=True, check=True, env=env)
     return out.stdout
 
@@ -138,7 +140,7 @@ CODE_FENCE = re.compile(r"```.*?```", re.S)
 LEAKS = {
     "marker_line": re.compile(r"^\s*(=>|!:|\?\s|find:|do:|check:)", re.M),
     "alias_def": re.compile(r"(?<![:=<>!])\s:=\s"),
-    "mentions_steno": re.compile(r"\bsteno\b", re.I),
+    "mentions_subvocal": re.compile(r"\bsubvocal\b", re.I),
 }
 HR_HINTS = re.compile(r"\b(je|što|funkcija|primjer|koja|koji|rekurzij\w*|se|za|na|ili)\b", re.I)
 
@@ -156,7 +158,7 @@ def backend_claude_cli(model: str, effort: str):
     exe = shutil.which("claude")
     if not exe:
         sys.exit("eval: `claude` CLI not found on PATH")
-    workdir = tempfile.mkdtemp(prefix="steno-eval-")
+    workdir = tempfile.mkdtemp(prefix="subvocal-eval-")
 
     def call(system_add: str | None, prompt: str) -> dict:
         cmd = [exe, "-p", prompt, "--output-format", "json", "--model", model, "--effort", effort,
@@ -166,8 +168,8 @@ def backend_claude_cli(model: str, effort: str):
             cmd += ["--append-system-prompt", system_add]
         last = ""
         for attempt in range(3):
-            p = subprocess.run(cmd, cwd=workdir, capture_output=True, text=True, timeout=900,
-                               stdin=subprocess.DEVNULL)
+            p = subprocess.run(cmd, cwd=workdir, capture_output=True, encoding="utf-8", errors="replace",
+                               timeout=900, stdin=subprocess.DEVNULL)
             last = (p.stdout + p.stderr)[-400:]
             try:
                 o = json.loads(p.stdout)
@@ -237,9 +239,11 @@ def main() -> None:
     ap.add_argument("--model", default="sonnet")
     ap.add_argument("--effort", default="high", help="claude-cli effort level (default high)")
     ap.add_argument("--thinking", default="adaptive", help="anthropic: 'adaptive' or a budget in tokens")
-    ap.add_argument("--arms", default="baseline,control,lite,steno,ultrasteno")
+    ap.add_argument("--arms", default="baseline,control,lite,subvocal,ultrasubvocal")
+    ap.add_argument("--arm-file", action="append", default=[], metavar="NAME=PATH",
+                    help="extra arm whose system addition is the text of PATH (repeatable)")
     ap.add_argument("--runs", type=int, default=1)
-    ap.add_argument("--sets", default="tasks,open", help="comma list of prompt sets: tasks, open")
+    ap.add_argument("--sets", default="tasks,open", help="comma list of prompt sets under evals/prompts: tasks, hard, open")
     ap.add_argument("--open-runs", type=int, default=1, help="runs for the open set (default 1)")
     ap.add_argument("--only", help="comma list of prompt ids")
     ap.add_argument("--jobs", type=int, default=4)
@@ -248,17 +252,17 @@ def main() -> None:
     args = ap.parse_args()
 
     arms = [a for a in args.arms.split(",") if a]
+    extra = dict(spec.split("=", 1) for spec in args.arm_file)
     for a in arms:
-        if a not in ARMS:
-            sys.exit(f"eval: unknown arm {a!r}; choose from {ARMS}")
-    systems = {a: arm_system(a) for a in arms}
+        if a not in ARMS and a not in extra:
+            sys.exit(f"eval: unknown arm {a!r}; choose from {ARMS} or pass --arm-file {a}=PATH")
+    systems = {a: Path(extra[a]).read_text(encoding="utf-8") if a in extra else arm_system(a) for a in arms}
 
-    sets = set(args.sets.split(","))
+    sets = [k for k in args.sets.split(",") if k]
     jobs: list[dict] = []
     only = set(args.only.split(",")) if args.only else None
-    for kind, runs in (("tasks", args.runs), ("open", args.open_runs)):
-        if kind not in sets:
-            continue
+    for kind in sets:
+        runs = args.open_runs if kind == "open" else args.runs
         for item in load_jsonl(HERE / "prompts" / f"{kind}.jsonl"):
             if only and item["id"] not in only:
                 continue
@@ -297,7 +301,7 @@ def main() -> None:
                        answer_tokens=r["output_tokens"] - r["thinking_tokens"],
                        thinking_source=r["thinking_source"], leaks=leaks(r["reply"]), reply=r["reply"],
                        refused=r["refused"])
-            if j["kind"] == "tasks":
+            if j["kind"] != "open":
                 rec["final"] = final_answer(r["reply"])
                 rec["correct"] = score(item, r["reply"])
             elif item.get("lang") == "hr":
@@ -308,7 +312,7 @@ def main() -> None:
         with lock:
             with out.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-            tag = "ERR" if rec.get("error") else "REF" if rec.get("refused") else (("ok " if rec.get("correct") else "BAD") if j["kind"] == "tasks" else "   ")
+            tag = "ERR" if rec.get("error") else "REF" if rec.get("refused") else (("ok " if rec.get("correct") else "BAD") if j["kind"] != "open" else "   ")
             print(f"  {tag} {j['arm']:<10} {item['id']:<16} think={rec.get('thinking_tokens', '-')!s:>5} "
                   f"answer={rec.get('answer_tokens', '-')!s:>5} leaks={rec.get('leaks', [])}", file=sys.stderr)
 

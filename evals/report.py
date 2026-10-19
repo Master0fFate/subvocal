@@ -6,8 +6,8 @@ Per arm:
              baseline and against control (control is the honest comparison)
   accuracy   tasks answered correctly
   reply      median reply tokens on tasks and on open prompts: should not
-             move, because steno must leave the reply alone
-  leaks      replies showing steno notation or naming steno
+             move, because subvocal must leave the reply alone
+  leaks      replies showing subvocal notation or naming subvocal
   language   the Croatian open prompt answered in Croatian
 
 Prompts where every arm thought for 0 tokens carry no signal about thinking
@@ -28,7 +28,7 @@ import statistics
 import sys
 from pathlib import Path
 
-ORDER = ["baseline", "control", "lite", "steno", "ultrasteno"]
+ORDER = ["baseline", "control", "lite", "subvocal", "ultrasubvocal"]
 
 
 def load(p: Path) -> list[dict]:
@@ -49,8 +49,9 @@ def pct(new: float, old: float) -> str:
 
 
 def summarise(rows: list[dict]) -> dict:
-    arms = [a for a in ORDER if any(r["arm"] == a for r in rows)]
-    tasks = [r for r in rows if r["kind"] == "tasks"]
+    seen = {r["arm"] for r in rows}
+    arms = [a for a in ORDER if a in seen] + sorted(seen - set(ORDER))
+    tasks = [r for r in rows if r["kind"] != "open"]
     opens = [r for r in rows if r["kind"] == "open"]
 
     # Mean thinking per (prompt, arm) across runs, then compare prompt by prompt.
@@ -87,9 +88,9 @@ def summarise(rows: list[dict]) -> dict:
             s["vs_baseline"] = pct(s["thinking_total"], out["arms"]["baseline"]["thinking_total"])
         if "control" in out["arms"]:
             s["vs_control"] = pct(s["thinking_total"], out["arms"]["control"]["thinking_total"])
-    # Per-prompt view for steno vs baseline: how often did steno think less?
-    for a in ("lite", "steno", "ultrasteno"):
-        if a in arms and "baseline" in arms:
+    # Per-prompt view for subvocal vs baseline: how often did subvocal think less?
+    for a in arms:
+        if a != "baseline" and "baseline" in arms:
             wins = sum(1 for i in signal if statistics.mean(per[(i, a)]) < statistics.mean(per[(i, "baseline")]))
             out.setdefault("less_thinking_than_baseline", {})[a] = f"{wins}/{len(signal)}"
     return out
