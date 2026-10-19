@@ -2,8 +2,9 @@
 """Summarise an eval run (evals/run.py output) as a Markdown table.
 
 Per arm:
-  thinking   total thinking tokens on the task set, and the change against
-             baseline and against control (control is the honest comparison)
+  thinking   total thinking tokens on the task set, the change of that sum
+             against baseline, and the geometric mean of the per-prompt ratio
+             against baseline, which one very long call cannot dominate
   accuracy   tasks answered correctly
   reply      median reply tokens on tasks and on open prompts: should not
              move, because subvocal must leave the reply alone
@@ -24,11 +25,12 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import math
 import statistics
 import sys
 from pathlib import Path
 
-ORDER = ["baseline", "control", "lite", "subvocal", "ultrasubvocal"]
+ORDER = ["baseline", "control", "lite", "plain", "subvocal", "ultrasubvocal"]
 
 
 def load(p: Path) -> list[dict]:
@@ -86,6 +88,9 @@ def summarise(rows: list[dict]) -> dict:
         s = out["arms"][a]
         if "baseline" in out["arms"]:
             s["vs_baseline"] = pct(s["thinking_total"], out["arms"]["baseline"]["thinking_total"])
+            ratios = [statistics.mean(per[(i, a)]) / statistics.mean(per[(i, "baseline")])
+                      for i in signal if statistics.mean(per[(i, "baseline")]) > 0 and statistics.mean(per[(i, a)]) > 0]
+            s["geomean_vs_baseline"] = pct(math.exp(statistics.mean(math.log(r) for r in ratios)), 1) if ratios else "n/a"
         if "control" in out["arms"]:
             s["vs_control"] = pct(s["thinking_total"], out["arms"]["control"]["thinking_total"])
     # Per-prompt view for subvocal vs baseline: how often did subvocal think less?
@@ -101,11 +106,11 @@ def markdown(s: dict) -> str:
         f"Model `{s['model']}` via `{s['backend']}`, {s['prompts']} task prompts x {s['runs']} run(s). "
         f"Thinking totals use the {s['prompts_with_thinking']} prompts where at least one arm thought.",
         "",
-        "| Arm | Thinking tokens | vs baseline | vs control | Accuracy | Reply median (tasks / open) | Leaks | Croatian reply | Refused |",
-        "|---|---|---|---|---|---|---|---|---|",
+        "| Arm | Thinking tokens | vs baseline (sum) | per prompt (geomean) | vs control | Accuracy | Reply median (tasks / open) | Leaks | Croatian reply | Refused |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for a, v in s["arms"].items():
-        lines.append(f"| {a} | {v['thinking_total']} | {v.get('vs_baseline', '')} | {v.get('vs_control', '')} | "
+        lines.append(f"| {a} | {v['thinking_total']} | {v.get('vs_baseline', '')} | {v.get('geomean_vs_baseline', '')} | {v.get('vs_control', '')} | "
                      f"{v['accuracy']} | {v['reply_median_tasks']} / {v['reply_median_open']} | "
                      f"{v['leaks']}/{v['calls']} | {v['hr_ok'] or '-'} | {v['refused']}/{v['calls']} |")
     less = s.get("less_thinking_than_baseline", {})

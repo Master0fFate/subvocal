@@ -1,33 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="468" viewBox="0 0 760 468" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
-<rect width="760" height="468" fill="#ffffff"/>
-<text x="16" y="24" font-weight="600" fill="#24292f">haiku, 24 prompts x 3 runs, effort high</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="498" viewBox="0 0 760 498" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
+<rect width="760" height="498" fill="#ffffff"/>
+<text x="16" y="24" font-weight="600" fill="#24292f">haiku, 24 prompts x 4 runs, effort high</text>
 <text x="16" y="42" fill="#9a9a9a" font-size="12">thinking tokens, total over the task set; lower is better</text>
 <text x="198" y="79" text-anchor="end" fill="#24292f">baseline (no instruction)</text>
-<rect x="206" y="64" width="371" height="22" rx="3" fill="#9a9a9a"/>
-<text x="585" y="79" fill="#24292f">39205, accuracy 72/72</text>
-<text x="198" y="109" text-anchor="end" fill="#24292f">subvocal lite (default)</text>
-<rect x="206" y="94" width="301" height="22" rx="3" fill="#6666ff"/>
-<text x="515" y="109" fill="#24292f">31810 (-19%), accuracy 71/72</text>
-<text x="198" y="139" text-anchor="end" fill="#24292f">subvocal strict (opt-in)</text>
-<rect x="206" y="124" width="388" height="22" rx="3" fill="#6666ff"/>
-<text x="602" y="139" fill="#24292f">40987 (+5%), accuracy 72/72</text>
-<text x="198" y="169" text-anchor="end" fill="#24292f">ultrasubvocal (opt-in)</text>
-<rect x="206" y="154" width="388" height="22" rx="3" fill="#6666ff"/>
-<text x="602" y="169" fill="#24292f">41019 (+5%), accuracy 72/72</text>
-<text x="16" y="212" font-weight="600" fill="#24292f">sonnet, 24 prompts x 2 runs, effort high</text>
-<text x="16" y="230" fill="#9a9a9a" font-size="12">thinking tokens, total over the task set; lower is better</text>
-<text x="198" y="267" text-anchor="end" fill="#24292f">baseline (no instruction)</text>
-<rect x="206" y="252" width="388" height="22" rx="3" fill="#9a9a9a"/>
-<text x="602" y="267" fill="#24292f">13632, accuracy 48/48</text>
-<text x="198" y="297" text-anchor="end" fill="#24292f">subvocal lite (default)</text>
-<rect x="206" y="282" width="320" height="22" rx="3" fill="#6666ff"/>
-<text x="534" y="297" fill="#24292f">11244 (-18%), accuracy 48/48</text>
-<text x="16" y="340" font-weight="600" fill="#24292f">opus, 24 prompts x 1 runs, effort high</text>
+<rect x="206" y="64" width="388" height="22" rx="3" fill="#9a9a9a"/>
+<text x="602" y="79" fill="#24292f">38005, accuracy 95/96</text>
+<text x="198" y="109" text-anchor="end" fill="#24292f">subvocal (default)</text>
+<rect x="206" y="94" width="327" height="22" rx="3" fill="#6666ff"/>
+<text x="541" y="109" fill="#24292f">32056 (-16%), accuracy 96/96</text>
+<text x="198" y="139" text-anchor="end" fill="#24292f">ultrasubvocal</text>
+<rect x="206" y="124" width="296" height="22" rx="3" fill="#6666ff"/>
+<text x="510" y="139" fill="#24292f">28990 (-24%), accuracy 93/96</text>
+<text x="16" y="182" font-weight="600" fill="#24292f">sonnet, 24 prompts x 2 runs, effort high</text>
+<text x="16" y="200" fill="#9a9a9a" font-size="12">thinking tokens, total over the task set; lower is better</text>
+<text x="198" y="237" text-anchor="end" fill="#24292f">baseline (no instruction)</text>
+<rect x="206" y="222" width="388" height="22" rx="3" fill="#9a9a9a"/>
+<text x="602" y="237" fill="#24292f">12947, accuracy 48/48</text>
+<text x="198" y="267" text-anchor="end" fill="#24292f">subvocal (default)</text>
+<rect x="206" y="252" width="347" height="22" rx="3" fill="#6666ff"/>
+<text x="561" y="267" fill="#24292f">11594 (-10%), accuracy 47/48</text>
+<text x="198" y="297" text-anchor="end" fill="#24292f">ultrasubvocal</text>
+<rect x="206" y="282" width="362" height="22" rx="3" fill="#6666ff"/>
+<text x="576" y="297" fill="#24292f">12092 (-7%), accuracy 48/48</text>
+<text x="16" y="340" font-weight="600" fill="#24292f">opus, 24 prompts x 2 runs, effort high</text>
 <text x="16" y="358" fill="#9a9a9a" font-size="12">thinking tokens, total over the task set; lower is better</text>
 <text x="198" y="395" text-anchor="end" fill="#24292f">baseline (no instruction)</text>
 <rect x="206" y="380" width="388" height="22" rx="3" fill="#9a9a9a"/>
-<text x="602" y="395" fill="#24292f">8385, accuracy 24/24</text>
-<text x="198" y="425" text-anchor="end" fill="#24292f">subvocal lite (default)</text>
-<rect x="206" y="410" width="346" height="22" rx="3" fill="#6666ff"/>
-<text x="560" y="425" fill="#24292f">7478 (-11%), accuracy 24/24</text>
+<text x="602" y="395" fill="#24292f">10090, accuracy 48/48</text>
+<text x="198" y="425" text-anchor="end" fill="#24292f">subvocal (default)</text>
+<rect x="206" y="410" width="324" height="22" rx="3" fill="#6666ff"/>
+<text x="538" y="425" fill="#24292f">8416 (-17%), accuracy 48/48</text>
+<text x="198" y="455" text-anchor="end" fill="#24292f">ultrasubvocal</text>
+<rect x="206" y="440" width="317" height="22" rx="3" fill="#6666ff"/>
+<text x="531" y="455" fill="#24292f">8238 (-18%), accuracy 48/48</text>
 </svg>

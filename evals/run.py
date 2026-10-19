@@ -6,10 +6,8 @@ Every prompt runs once per arm (and per --runs). Arms:
   baseline     no addition to the system prompt
   control      "Keep your internal reasoning concise." The honest comparison:
                what subvocal adds on top of simply asking for brevity
-  lite         the subvocal-lite ruleset as the hooks inject it
-  subvocal        the strict ruleset the SessionStart hook injects, plus the
-               per-turn reminder the prompt hook adds
-  ultrasubvocal   same, for the ultrasubvocal mode
+  subvocal     the subvocal mode text as the hooks inject it
+  ultrasubvocal   the ultrasubvocal mode text as the hooks inject it
 
 Two prompt sets:
 
@@ -61,7 +59,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 BASE_SYSTEM = "You are Claude, a helpful assistant."
 CONTROL = "Keep your internal reasoning concise. Your reply is unaffected: write it as you normally would."
-ARMS = ["baseline", "control", "lite", "subvocal", "ultrasubvocal"]
+ARMS = ["baseline", "control", "subvocal", "ultrasubvocal"]
 
 
 # --------------------------------------------------------------------------
@@ -69,8 +67,7 @@ ARMS = ["baseline", "control", "lite", "subvocal", "ultrasubvocal"]
 # --------------------------------------------------------------------------
 
 def hook_text(mode: str) -> str:
-    js = ("const c=require(process.argv[1]);const r=c.reminder(process.argv[2]);"
-          "process.stdout.write(c.buildRuleset(process.argv[2],process.argv[3])+(r?'\\n\\n'+r:''))")
+    js = "const c=require(process.argv[1]);process.stdout.write(c.buildRuleset(process.argv[2],process.argv[3]))"
     hooks = REPO / "src" / "hooks"
     env = {k: v for k, v in os.environ.items() if k != "CLAUDE_PLUGIN_ROOT"}
     out = subprocess.run(["node", "-e", js, str(hooks / "subvocal-config.js"), mode, str(hooks)],
@@ -239,7 +236,7 @@ def main() -> None:
     ap.add_argument("--model", default="sonnet")
     ap.add_argument("--effort", default="high", help="claude-cli effort level (default high)")
     ap.add_argument("--thinking", default="adaptive", help="anthropic: 'adaptive' or a budget in tokens")
-    ap.add_argument("--arms", default="baseline,control,lite,subvocal,ultrasubvocal")
+    ap.add_argument("--arms", default="baseline,control,subvocal,ultrasubvocal")
     ap.add_argument("--arm-file", action="append", default=[], metavar="NAME=PATH",
                     help="extra arm whose system addition is the text of PATH (repeatable)")
     ap.add_argument("--runs", type=int, default=1)

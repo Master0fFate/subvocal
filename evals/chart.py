@@ -11,8 +11,8 @@ import report
 ACCENT = "#6666ff"
 GREY = "#9a9a9a"
 INK = "#24292f"
-LABELS = {"baseline": "baseline (no instruction)", "control": "\"keep reasoning concise\"", "lite": "subvocal lite (default)",
-          "subvocal": "subvocal strict (opt-in)", "ultrasubvocal": "ultrasubvocal (opt-in)"}
+LABELS = {"baseline": "baseline (no instruction)", "control": "\"keep reasoning concise\"", "lite": "subvocal (v0.1 lite text)", "plain": "plain sentence (0.1 default)",
+          "subvocal": "subvocal (default)", "ultrasubvocal": "ultrasubvocal"}
 
 
 def panel(s: dict, arms: list[str], x0: int, y0: int, width: int) -> tuple[list[str], int]:
