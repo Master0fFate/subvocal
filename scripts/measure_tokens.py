@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Measure the real token cost of every string in lexicon/candidates.json.
 
-Steno's rule is "tokens, not characters": a symbol earns a place in the
+Subvocal's rule is "tokens, not characters": a symbol earns a place in the
 dialect only if a real tokenizer says it is cheaper. This script produces
 those numbers. It never guesses.
 
@@ -135,7 +135,7 @@ def backend_claude_cli(model: str):
     exe = shutil.which("claude")
     if not exe:
         sys.exit("measure: `claude` CLI not found on PATH (needed for --backend claude-cli)")
-    workdir = tempfile.mkdtemp(prefix="steno-measure-")  # empty dir: no CLAUDE.md, no project settings
+    workdir = tempfile.mkdtemp(prefix="subvocal-measure-")  # empty dir: no CLAUDE.md, no project settings
 
     def count(text: str) -> int:
         cmd = [exe, "-p", text, "--output-format", "json", "--model", model,

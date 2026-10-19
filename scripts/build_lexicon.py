@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Turn measured token costs into the steno lexicon, and write it into the skills.
+"""Turn measured token costs into the subvocal lexicon, and write it into the skills.
 
 Input:  lexicon/candidates.json   concepts, English forms, notation candidates
         lexicon/measured.json     real token costs (scripts/measure_tokens.py)
@@ -38,7 +38,7 @@ REPO = Path(__file__).resolve().parent.parent
 CANDIDATES = REPO / "lexicon" / "candidates.json"
 MEASURED = REPO / "lexicon" / "measured.json"
 LEXICON = REPO / "lexicon" / "lexicon.json"
-SKILLS = [REPO / "skills" / "steno" / "SKILL.md", REPO / "skills" / "ultrasteno" / "SKILL.md"]
+SKILLS = [REPO / "skills" / "subvocal" / "SKILL.md", REPO / "skills" / "ultrasubvocal" / "SKILL.md"]
 BEGIN = "<!-- LEXICON:BEGIN"
 END = "<!-- LEXICON:END -->"
 DOMAIN_RANK = {"code": 0, "math": 0, "ascii": 1}
