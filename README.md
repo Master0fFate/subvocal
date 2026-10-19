@@ -9,36 +9,42 @@
 
 Subvocal is a plugin for coding agents that cuts the tokens a model spends on
 **internal reasoning** while leaving the reply exactly as it would have been.
-It injects one measured instruction at the start of every session, on every
-model, with no setup. Nothing is skipped and nothing is hidden: the model
-still does every step and check, it just stops narrating them.
+It injects one measured sentence at the start of every session, on every
+model, with no setup and no refusals. Nothing is skipped and nothing is
+hidden: the model still does every step and check, it just stops narrating
+them.
 
 [Caveman](https://github.com/JuliusBrussee/caveman) shortens the *answer*.
-Subvocal shortens the *thinking*.
+Subvocal shortens the *thinking*. They stack.
 
 ## Measured
 
 Fresh runs of the shipped text on 24 multi-step tasks with checkable answers,
-through the Claude Code CLI at effort `high`. Full method, confidence
-intervals and every arm that lost: [docs/HONEST-NUMBERS.md](docs/HONEST-NUMBERS.md).
+through the Claude Code CLI at effort `high`, after the text was chosen on
+separate development runs. Full method, confidence intervals and every
+candidate that lost: [docs/HONEST-NUMBERS.md](docs/HONEST-NUMBERS.md).
 
-![thinking tokens per arm on Haiku, Sonnet and Opus](docs/benchmark.svg)
+![thinking tokens per mode on Haiku, Sonnet and Opus](docs/benchmark.svg)
 
-| Model | Runs | Thinking tokens | 95% CI | Accuracy (off → on) | Leaked notation | Refusals |
-|---|---|---|---|---|---|---|
-| Haiku 5.5 | 24 × 3 | **−19%** | −30% to −1% | 72/72 → 71/72 | 0 | 0 |
-| Sonnet 5.5 | 24 × 2 | **−18%** | −29% to −0.3% | 48/48 → 48/48 | 0 | 0 |
-| Opus 5.5 | 24 × 1 | **−11%** | −23% to +0.4% | 24/24 → 24/24 | 0 | 0 |
+<!-- NUMBERS:BEGIN -->
+| Model | Runs | Mode | Thinking tokens (sum) | 95% CI | Per prompt (geomean) | Accuracy (off → on) | Leaked notation | Refusals |
+|---|---|---|---|---|---|---|---|---|
+| Haiku 5.5 | 24 × 4 | subvocal | **−16%** | −25% to −9% | −19% | 95/96 → 96/96 | 0 | 0 |
+| | | ultrasubvocal | **−24%** | −33% to −16% | −26% | 95/96 → 93/96 | 0 | 0 |
+| Sonnet 5.5 | 24 × 2 | subvocal | **−10%** | −32% to +18% | −3% | 48/48 → 47/48 | 0 | 0 |
+| | | ultrasubvocal | **−7%** | −12% to +2% | −3% | 48/48 → 48/48 | 0 | 0 |
+| Opus 5.5 | 24 × 2 | subvocal | **−17%** | −24% to −11% | −21% | 48/48 → 48/48 | 0 | 0 |
+| | | ultrasubvocal | **−18%** | −25% to −9% | −17% | 48/48 → 48/48 | 0 | 0 |
+<!-- NUMBERS:END -->
 
-Total output tokens (thinking plus reply) moved by −19%, −12% and −4%. The
-instruction was chosen on a separate development run of 14 candidates and
-confirmed afterwards on these fresh calls, so the number it reports is not the
-number it was fitted to.
-
-What did **not** work is in the same document: the strict shorthand dialect
-this project started with (see [The strict dialect](#the-strict-dialect-opt-in))
-measured +5% on Haiku and is declined outright by Sonnet and Opus. It stays
-available as an opt-in mode. The default is the sentence that won.
+The number a mode reports is not the number it was fitted to: both texts
+were picked on development runs (27 candidate instructions over four
+rounds) and then measured again on fresh calls. The sum is what you pay; the
+geometric mean of the per-prompt ratio is what a typical prompt sees, and one
+very long outlier call cannot move it. Sonnet thinks a third as much as Haiku
+on these tasks, so its two-run intervals are wide; read its row as "probably
+a small saving", not as a measured one. Neither text has been refused on any
+call, on any model.
 
 ## Contents
 
@@ -52,7 +58,8 @@ available as an opt-in mode. The default is the sentence that won.
   - [OpenCode and any host that reads AGENTS.md](#opencode-and-any-host-that-reads-agentsmd)
 - [Use it](#use-it)
 - [How it is enforced](#how-it-is-enforced)
-- [The strict dialect (opt-in)](#the-strict-dialect-opt-in)
+- [Subvocal and caveman](#subvocal-and-caveman)
+- [Where the shorthand dialect went](#where-the-shorthand-dialect-went)
 - [Run the benchmark yourself](#run-the-benchmark-yourself)
 - [Development](#development)
 
@@ -64,9 +71,10 @@ Claude Code, one command, then start a new session:
 /plugin install subvocal --marketplace Master0fFate/subvocal
 ```
 
-That is the whole setup. Subvocal is on from the first turn. `/subvocal
-status` shows the mode, `/subvocal off` turns it off for the session. Every
-other host is covered below.
+That is the whole setup. Subvocal is on from the first turn. `/subvocal ultra`
+switches to the more aggressive text, `/subvocal status` shows the mode,
+`/subvocal off` turns it off for the session. Every other host is covered
+below.
 
 ## Install
 
@@ -165,7 +173,7 @@ your-statusline-command; node ~/.claude/subvocal/hooks/subvocal-statusline.js
 |---|---|---|
 | `SessionStart` | `src/hooks/subvocal-activate.js` | resolve the mode, inject the instruction |
 | `SubagentStart` | `subvocal-activate.js --subagent` | give subagents the same instruction |
-| `UserPromptSubmit` | `src/hooks/subvocal-mode-tracker.js` | mode switches, `/subvocal status`, per-turn reminder in strict modes |
+| `UserPromptSubmit` | `src/hooks/subvocal-mode-tracker.js` | `/subvocal` mode switches and `/subvocal status`; silent on every other prompt |
 
 All hooks fail open: on any error they print nothing and exit 0, so a broken
 install never blocks a session.
@@ -304,7 +312,7 @@ This writes a fenced block to `AGENTS.md` (created if missing), and to
 
 ```markdown
 <!-- subvocal:begin -->
-Keep your internal reasoning concise. Your reply is unaffected: write it as you normally would.
+Keep your internal reasoning concise: a minimum draft per step, a few words each. Your reply is unaffected: write it as you normally would.
 <!-- subvocal:end -->
 ```
 
@@ -312,7 +320,7 @@ Running it again changes nothing; `npx subvocal --init --uninstall` removes
 the block and leaves the rest of the file alone. OpenCode, Codex, Copilot in
 VS Code, Windsurf, Cline and anything else that reads `AGENTS.md` start every
 session with it. Hosts that read `SKILL.md` folders can also copy
-`skills/subvocal-lite/` into their skill directory (`.opencode/skills/`,
+`skills/subvocal/` into their skill directory (`.opencode/skills/`,
 `.agents/skills/`, `.claude/skills/`).
 
 ## Use it
@@ -320,36 +328,35 @@ session with it. Hosts that read `SKILL.md` folders can also copy
 ### Commands
 
 ```
-/subvocal            lite (the default): the measured instruction
-/subvocal lite       same, explicitly
-/subvocal strict     the strict shorthand dialect (Haiku only; see below)
-/subvocal ultra      the tightest dialect (also /ultrasubvocal)
+/subvocal            default mode: "Keep your internal reasoning concise: a minimum draft per step, a few words each. ..."
+/subvocal ultra      aggressive mode, see Measured
 /subvocal status     show the current mode, change nothing
 /subvocal off        off for this session (also "stop subvocal", "normal mode")
 ```
 
-Slash commands work in Claude Code and Gemini CLI. On Codex, Cursor and
-Copilot a short plain-text request such as "subvocal off" does the same job.
+`/ultrasubvocal` is the same as `/subvocal ultra`. `/subvocal lite` is kept
+as an alias of the default for anyone upgrading from 0.1. Slash commands work
+in Claude Code and Gemini CLI; on Codex, Cursor and Copilot a short plain-text
+request such as "subvocal off" does the same job.
 
 ### Default mode
 
-Sessions start in `lite` on every model. To change that, set one of these,
-first match wins:
+Sessions start in `subvocal` on every model. To change that, set one of
+these, first match wins:
 
 1. `SUBVOCAL_DEFAULT_MODE` environment variable
 2. `.subvocal.json` or `.subvocal/config.json` in the project (searched upward)
 3. `~/.config/subvocal/config.json` (`%APPDATA%\subvocal\config.json` on Windows)
 
 ```json
-{ "defaultMode": "manual" }
+{ "defaultMode": "ultrasubvocal" }
 ```
 
 | Value | Meaning |
 |---|---|
-| `auto` | `lite` on every model (default) |
-| `lite` | same, explicitly |
-| `subvocal` / `strict` | strict dialect everywhere (declined by Sonnet 5.5 / Opus 5.5) |
-| `ultrasubvocal` / `ultra` | tightest dialect (same caveat) |
+| `auto` | `subvocal` on every model (default) |
+| `subvocal` | same, explicitly (`lite` still works as an alias) |
+| `ultrasubvocal` / `ultra` | the aggressive mode on every model |
 | `manual` | start off; `/subvocal` turns it on |
 | `off` | never on |
 
@@ -357,58 +364,43 @@ first match wins:
 
 Like caveman, subvocal does not rely on the model remembering a skill:
 
-- **SessionStart** injects the instruction for the session's mode.
-- **UserPromptSubmit** handles mode switches and, in strict modes, re-injects a
-  short reminder every turn.
-- **SubagentStart** gives subagents the same instruction.
+- **SessionStart** injects the mode's sentence into the session context.
+- **SubagentStart** gives subagents the same sentence.
+- **UserPromptSubmit** handles `/subvocal` switches and `/subvocal status`,
+  and stays silent on every other prompt, so it costs nothing per turn.
 - Mode state is per session and survives resume and compaction. It lives under
   `$CLAUDE_CONFIG_DIR/.subvocal/sessions/`.
 
 Codex, Cursor and Copilot get the SessionStart part only. Hosts without hooks
 get the `--init` rule-file block instead.
 
-## The strict dialect (opt-in)
+## Subvocal and caveman
 
-Subvocal began as a measured shorthand for reasoning: one fact per line,
-one-letter aliases, and only the operators a real tokenizer says are cheap.
-Every symbol was measured, and most "short" math symbols turned out to be
-traps:
+| | caveman | subvocal |
+|---|---|---|
+| What it compresses | the reply you read | the model's internal reasoning |
+| What you see | terse, caveman-style answers | the same reply as without it |
+| How it is measured | reply tokens | thinking tokens on tasks with checkable answers, accuracy held |
+| Modes | several, with per-turn reinforcement | two plain sentences, injected once per session |
+| Refusals | none | none, on every model tested |
+| Together | yes: caveman's hooks trim the answer, subvocal's sentence trims the thinking in the same session | |
 
-| Looks short | Tokens | Dialect writes | Tokens |
-|---|---|---|---|
-| `∴` therefore | 4 | `→` | 1 |
-| `≠` | 4 | `!=` | 1 |
-| `≥` | 4 | `>=` | 2 |
-| `✓` / `✗` | 4 | `true` / `false` | 1 |
-| `->` | 2 | `→` | 1 |
-| alias `C1` | 3 | alias `C` | 1 |
-| "which means that" | 3 | `→` | 1 |
-| "hold on, that's wrong" | 8 | `!: <fix>` | 1 |
+They are different levers on the same bill. If you only want shorter
+answers, use caveman. If you want your answers untouched and the hidden
+reasoning cheaper, use subvocal. If you want both, install both.
 
-A strict-mode trace for *"Jobs in our retry queue sometimes get dropped after
-one failure. Code is in src/pay/retryQueue.ts."* looks like this:
+## Where the shorthand dialect went
 
-```
-find: why job dropped after 1 fail
-Q := src/pay/retryQueue.ts
-MAX_RETRIES = 3
-Q.onFail(): attempt + 1; if attempt > MAX_RETRIES: drop
-Q.onSuccess(): attempt not reset
-case fail x3, success, fail: attempt = 4 > 3 → drop after 1 new fail
-check: matches report true
-? other writers of attempt
-Q.retry() reads attempt only
-=> reset attempt in Q.onSuccess()
-```
-
-The per-token findings hold and are useful anywhere a model writes billed
-text. The dialect as a thinking instruction did not: a 12 KB specification of
-how to write each line gave the model more to deliberate about than the
-notation saved, and the safeguards on Sonnet 5.5 and Opus 5.5 decline it
-entirely. `/subvocal strict` and `/subvocal ultra` remain for anyone who wants
-to keep experimenting with it. The lexicon (45 forms, 36 banned symbols) is
-generated from `lexicon/measured.json` by `scripts/build_lexicon.py` and
-specified in [docs/DIALECT.md](docs/DIALECT.md).
+Subvocal 0.1 started as a measured shorthand dialect for reasoning: one fact
+per line, one-letter aliases, and only the operators a real tokenizer says
+are cheap (`∴` costs 4 tokens, `→` costs 1). The per-token findings hold and
+are useful anywhere a model writes billed text. The dialect as a thinking
+instruction did not: a 12 KB specification of how to write each line gave
+the model more to deliberate about than the notation saved (+5% on Haiku),
+and the safeguards on Sonnet 5.5 and Opus 5.5 declined it entirely. It is
+now a research document, [docs/DIALECT.md](docs/DIALECT.md), with its
+measured lexicon and the pipeline that produced it (`lexicon/`, `scripts/`,
+the `/subvocal-lexicon` skill). No mode injects it.
 
 ## Run the benchmark yourself
 
@@ -418,27 +410,25 @@ reaches any arm. Each arm's text is produced by the hook code, so it measures
 what ships.
 
 ```bash
-python3 evals/run.py --model haiku --sets hard,open --runs 3 --arms baseline,lite --out evals/snapshots/mine.jsonl
+python3 evals/run.py --model haiku --sets hard,open --runs 3 --arms baseline,subvocal,ultrasubvocal --out evals/snapshots/mine.jsonl
 python3 evals/report.py evals/snapshots/mine.jsonl
 python3 evals/chart.py evals/snapshots/mine.jsonl --out docs/mine.svg
 ```
 
 To test a different instruction without editing anything, pass it as an arm:
-`--arms baseline,lite,mine --arm-file mine=my-instruction.md`. To rebuild the
-dialect's lexicon for another tokenizer, see `scripts/` and the
-`/subvocal-lexicon` skill. Real runs cost API calls or subscription usage;
-details in [evals/README.md](evals/README.md).
+`--arms baseline,subvocal,mine --arm-file mine=my-instruction.md`. Real runs
+cost API calls or subscription usage; details in
+[evals/README.md](evals/README.md).
 
 ## Development
 
 ```
-skills/             subvocal-lite (default), subvocal, ultrasubvocal, subvocal-lexicon
-lexicon/            candidates, measured token counts, generated lexicon
-scripts/            mine_phrases.py, measure_tokens.py, build_lexicon.py
+skills/             subvocal (default), ultrasubvocal, subvocal-lexicon
 src/hooks/          SessionStart / UserPromptSubmit / SubagentStart / statusline hooks
 installer/          standalone Claude Code installer, npm bin, --init rule blocks
 evals/              eval harness, prompt sets, chart, committed snapshots
-docs/               DIALECT.md, HONEST-NUMBERS.md, benchmark.svg
+docs/               HONEST-NUMBERS.md, benchmark.svg, DIALECT.md (research)
+lexicon/ scripts/   the dialect's token-measurement pipeline
 .claude-plugin/ .codex/ .cursor-plugin/ .github/hooks/ hooks/ commands/ GEMINI.md
                     host integrations
 tests/              node:test + unittest
@@ -446,9 +436,9 @@ tests/              node:test + unittest
 
 ```bash
 npm test                                   # node + python tests
-python3 scripts/build_lexicon.py --check   # generated block is current
+python3 scripts/build_lexicon.py --check   # generated lexicon block in docs/DIALECT.md is current
 ```
 
-CI runs both on Ubuntu, macOS and Windows with Node 18 and 22. Rules for
-changing the dialect are in [CLAUDE.md](CLAUDE.md); pull request expectations
-are in [CONTRIBUTING.md](CONTRIBUTING.md). MIT licensed.
+CI runs both on Ubuntu, macOS and Windows with Node 18 and 22. Project rules
+are in [CLAUDE.md](CLAUDE.md); pull request expectations are in
+[CONTRIBUTING.md](CONTRIBUTING.md). MIT licensed.

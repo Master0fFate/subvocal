@@ -36,7 +36,7 @@ touches, under `$CLAUDE_CONFIG_DIR` (default `~/.claude`):
 | Path | Content |
 |---|---|
 | `subvocal/hooks/*.js` | the hook scripts |
-| `subvocal/skills/*/SKILL.md`, `skills/<name>/SKILL.md` | the instruction and the strict rulesets, so the slash commands work |
+| `subvocal/skills/*/SKILL.md`, `skills/<name>/SKILL.md` | the two mode texts, so the slash commands work |
 | `settings.json` | three hook entries, plus `statusLine` if asked |
 
 The plugin and the installer register the same hooks:
@@ -45,7 +45,7 @@ The plugin and the installer register the same hooks:
 |---|---|---|
 | SessionStart | `src/hooks/subvocal-activate.js` | resolve mode, inject the instruction |
 | SubagentStart | `subvocal-activate.js --subagent` | give subagents the same instruction |
-| UserPromptSubmit | `src/hooks/subvocal-mode-tracker.js` | mode switches, `/subvocal status`, per-turn reminder in strict modes |
+| UserPromptSubmit | `src/hooks/subvocal-mode-tracker.js` | `/subvocal` mode switches and `/subvocal status`; silent otherwise |
 
 Chaining the statusline badge after an existing statusline command:
 
@@ -65,7 +65,8 @@ Writes the instruction between `<!-- subvocal:begin -->` and
 `CLAUDE.md` and `.github/copilot-instructions.md` when those files already
 exist. Everything else in those files is left alone. This is the path for
 OpenCode, Copilot in VS Code, Windsurf, Cline, or any host that reads
-`AGENTS.md` and has no session hook.
+`AGENTS.md` and has no session hook. The block carries the default
+mode's sentence.
 
 ## Other hosts with hooks
 
@@ -91,7 +92,7 @@ Default mode, first match wins:
 1. `SUBVOCAL_DEFAULT_MODE` environment variable
 2. `.subvocal.json` or `.subvocal/config.json` in the project (searched upward)
 3. `~/.config/subvocal/config.json` (`%APPDATA%\subvocal\config.json` on Windows)
-4. `auto`: lite on every model
+4. `auto`: `subvocal` on every model
 
 To start sessions off instead:
 
@@ -101,20 +102,17 @@ To start sessions off instead:
 
 | Value | Meaning |
 |---|---|
-| `auto` (default) | `lite` on every model |
-| `lite` | same, explicitly |
-| `subvocal` / `strict` | strict dialect everywhere (declined by Sonnet 5.5 / Opus 5.5) |
-| `ultrasubvocal` / `ultra` | tightest dialect (same caveat) |
+| `auto` (default) | `subvocal` on every model |
+| `subvocal` | same, explicitly (`lite` works as an alias) |
+| `ultrasubvocal` / `ultra` | the aggressive mode on every model |
 | `manual` | start off; `/subvocal` turns it on |
 | `off` | never on |
 
 ## Commands
 
 ```
-/subvocal            lite (the default)
-/subvocal lite       same, explicitly
-/subvocal strict     strict dialect
-/subvocal ultra      ultrasubvocal (also /ultrasubvocal)
+/subvocal            default mode (also /subvocal lite, kept as an alias)
+/subvocal ultra      aggressive mode (also /ultrasubvocal)
 /subvocal status     show the mode, change nothing
 /subvocal off        off (also "stop subvocal", "normal mode")
 ```
