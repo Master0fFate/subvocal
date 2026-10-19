@@ -1,0 +1,1547 @@
+{
+ "generated_by": "scripts/build_lexicon.py",
+ "measured_with": {
+  "backend": "claude-cli",
+  "model": "haiku",
+  "measured_at": "2026-10-19"
+ },
+ "notation": [
+  {
+   "id": "implies",
+   "meaning": "therefore / so / which means",
+   "at": "mid",
+   "english": [
+    {
+     "s": "so",
+     "tokens": 1
+    },
+    {
+     "s": "which means",
+     "tokens": 2
+    },
+    {
+     "s": "therefore",
+     "tokens": 3
+    },
+    {
+     "s": "this means that",
+     "tokens": 3
+    },
+    {
+     "s": "it follows that",
+     "tokens": 4
+    },
+    {
+     "s": "which implies that",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3.0,
+   "write": "→",
+   "show": "→",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 2.0
+  },
+  {
+   "id": "conclude",
+   "meaning": "the final answer / conclusion is",
+   "at": "start",
+   "english": [
+    {
+     "s": "the answer is",
+     "tokens": 3
+    },
+    {
+     "s": "in conclusion",
+     "tokens": 4
+    },
+    {
+     "s": "so the final answer is",
+     "tokens": 5
+    },
+    {
+     "s": "therefore the result is",
+     "tokens": 5
+    }
+   ],
+   "english_median": 4.5,
+   "write": "=>",
+   "show": "=> <result>",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3.5
+  },
+  {
+   "id": "equals",
+   "meaning": "is equal to / gives / we get",
+   "at": "mid",
+   "english": [
+    {
+     "s": "equals",
+     "tokens": 2
+    },
+    {
+     "s": "we get",
+     "tokens": 2
+    },
+    {
+     "s": "which gives",
+     "tokens": 3
+    },
+    {
+     "s": "is equal to",
+     "tokens": 4
+    },
+    {
+     "s": "comes out to",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3,
+   "write": "=",
+   "show": "=",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 2
+  },
+  {
+   "id": "not_equal",
+   "meaning": "is not equal to / differs from",
+   "at": "mid",
+   "english": [
+    {
+     "s": "is different from",
+     "tokens": 3
+    },
+    {
+     "s": "does not match",
+     "tokens": 3
+    },
+    {
+     "s": "is not equal to",
+     "tokens": 5
+    }
+   ],
+   "english_median": 3,
+   "write": "!=",
+   "show": "!=",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2
+  },
+  {
+   "id": "greater",
+   "meaning": "is greater than",
+   "at": "mid",
+   "english": [
+    {
+     "s": "is more than",
+     "tokens": 3
+    },
+    {
+     "s": "is greater than",
+     "tokens": 4
+    },
+    {
+     "s": "is larger than",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": ">",
+   "show": ">",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3
+  },
+  {
+   "id": "less",
+   "meaning": "is less than",
+   "at": "mid",
+   "english": [
+    {
+     "s": "is less than",
+     "tokens": 3
+    },
+    {
+     "s": "is smaller than",
+     "tokens": 5
+    },
+    {
+     "s": "is fewer than",
+     "tokens": 5
+    }
+   ],
+   "english_median": 5,
+   "write": "<",
+   "show": "<",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 4
+  },
+  {
+   "id": "at_least",
+   "meaning": "at least / greater than or equal to",
+   "at": "mid",
+   "english": [
+    {
+     "s": "at least",
+     "tokens": 2
+    },
+    {
+     "s": "no less than",
+     "tokens": 3
+    },
+    {
+     "s": "greater than or equal to",
+     "tokens": 7
+    }
+   ],
+   "english_median": 3,
+   "write": ">=",
+   "show": ">=",
+   "tokens": 2,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "at_most",
+   "meaning": "at most / less than or equal to",
+   "at": "mid",
+   "english": [
+    {
+     "s": "at most",
+     "tokens": 2
+    },
+    {
+     "s": "no more than",
+     "tokens": 3
+    },
+    {
+     "s": "less than or equal to",
+     "tokens": 6
+    }
+   ],
+   "english_median": 3,
+   "write": "<=",
+   "show": "<=",
+   "tokens": 2,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "and",
+   "meaning": "and also / as well as",
+   "at": "mid",
+   "english": [
+    {
+     "s": "and",
+     "tokens": 1
+    },
+    {
+     "s": "and also",
+     "tokens": 2
+    },
+    {
+     "s": "as well as",
+     "tokens": 3
+    }
+   ],
+   "english_median": 2,
+   "write": "&",
+   "show": "&",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "not",
+   "meaning": "not / is not",
+   "at": "mid",
+   "english": [
+    {
+     "s": "not",
+     "tokens": 1
+    },
+    {
+     "s": "is not",
+     "tokens": 2
+    },
+    {
+     "s": "isn't",
+     "tokens": 3
+    }
+   ],
+   "english_median": 2,
+   "write": "not",
+   "show": "not",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "for_all",
+   "meaning": "for every / for all",
+   "at": "mid",
+   "english": [
+    {
+     "s": "for every",
+     "tokens": 2
+    },
+    {
+     "s": "for all",
+     "tokens": 2
+    },
+    {
+     "s": "for each",
+     "tokens": 2
+    }
+   ],
+   "english_median": 2,
+   "write": "for",
+   "show": "for",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "exists",
+   "meaning": "there exists / there is some",
+   "at": "mid",
+   "english": [
+    {
+     "s": "there exists",
+     "tokens": 3
+    },
+    {
+     "s": "there is a",
+     "tokens": 3
+    },
+    {
+     "s": "there is some",
+     "tokens": 3
+    }
+   ],
+   "english_median": 3,
+   "write": "any",
+   "show": "any",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2
+  },
+  {
+   "id": "member",
+   "meaning": "is one of / is in / belongs to",
+   "at": "mid",
+   "english": [
+    {
+     "s": "is one of",
+     "tokens": 3
+    },
+    {
+     "s": "is in the set",
+     "tokens": 4
+    },
+    {
+     "s": "belongs to",
+     "tokens": 4
+    },
+    {
+     "s": "is contained in",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4.0,
+   "write": "in",
+   "show": "in",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3.0
+  },
+  {
+   "id": "empty",
+   "meaning": "nothing / no such / empty",
+   "at": "mid",
+   "english": [
+    {
+     "s": "is empty",
+     "tokens": 3
+    },
+    {
+     "s": "none of them",
+     "tokens": 3
+    },
+    {
+     "s": "does not exist",
+     "tokens": 4
+    },
+    {
+     "s": "there is nothing",
+     "tokens": 5
+    }
+   ],
+   "english_median": 3.5,
+   "write": "none",
+   "show": "none",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2.5
+  },
+  {
+   "id": "times",
+   "meaning": "times / multiplied by",
+   "at": "mid",
+   "english": [
+    {
+     "s": "times",
+     "tokens": 1
+    },
+    {
+     "s": "multiplied by",
+     "tokens": 5
+    }
+   ],
+   "english_median": 3.0,
+   "write": "*",
+   "show": "*",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2.0
+  },
+  {
+   "id": "divided",
+   "meaning": "divided by / per",
+   "at": "mid",
+   "english": [
+    {
+     "s": "per",
+     "tokens": 1
+    },
+    {
+     "s": "out of",
+     "tokens": 2
+    },
+    {
+     "s": "divided by",
+     "tokens": 3
+    }
+   ],
+   "english_median": 2,
+   "write": "/",
+   "show": "/",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 1
+  },
+  {
+   "id": "squared",
+   "meaning": "squared / to the power",
+   "at": "mid",
+   "english": [
+    {
+     "s": "squared",
+     "tokens": 2
+    },
+    {
+     "s": "raised to",
+     "tokens": 3
+    },
+    {
+     "s": "to the power of",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3,
+   "write": "²",
+   "show": "x²",
+   "tokens": 2,
+   "domain": "math",
+   "saves": 1
+  },
+  {
+   "id": "increase",
+   "meaning": "increases / goes up by",
+   "at": "mid",
+   "english": [
+    {
+     "s": "grows",
+     "tokens": 2
+    },
+    {
+     "s": "increases by",
+     "tokens": 3
+    },
+    {
+     "s": "goes up by",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3,
+   "write": "+",
+   "show": "+",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 2
+  },
+  {
+   "id": "decrease",
+   "meaning": "decreases / goes down by",
+   "at": "mid",
+   "english": [
+    {
+     "s": "drops by",
+     "tokens": 3
+    },
+    {
+     "s": "decreases by",
+     "tokens": 4
+    },
+    {
+     "s": "goes down by",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "-",
+   "show": "-",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3
+  },
+  {
+   "id": "check_ok",
+   "meaning": "verified / that checks out",
+   "at": "mid",
+   "english": [
+    {
+     "s": "verified",
+     "tokens": 2
+    },
+    {
+     "s": "that's right",
+     "tokens": 3
+    },
+    {
+     "s": "that checks out",
+     "tokens": 4
+    },
+    {
+     "s": "this is correct",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3.5,
+   "write": "true",
+   "show": "true",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2.5
+  },
+  {
+   "id": "check_fail",
+   "meaning": "fails / that's wrong",
+   "at": "mid",
+   "english": [
+    {
+     "s": "fails",
+     "tokens": 2
+    },
+    {
+     "s": "that's wrong",
+     "tokens": 5
+    },
+    {
+     "s": "that doesn't work",
+     "tokens": 6
+    },
+    {
+     "s": "this is incorrect",
+     "tokens": 6
+    }
+   ],
+   "english_median": 5.5,
+   "write": "false",
+   "show": "false",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 4.5
+  },
+  {
+   "id": "contradiction",
+   "meaning": "contradiction / impossible",
+   "at": "mid",
+   "english": [
+    {
+     "s": "that's impossible",
+     "tokens": 5
+    },
+    {
+     "s": "this contradicts",
+     "tokens": 5
+    },
+    {
+     "s": "this is a contradiction",
+     "tokens": 7
+    }
+   ],
+   "english_median": 5,
+   "write": "contra",
+   "show": "contra",
+   "tokens": 2,
+   "domain": "ascii",
+   "saves": 3
+  },
+  {
+   "id": "unknown",
+   "meaning": "not sure yet / need to check",
+   "at": "start",
+   "english": [
+    {
+     "s": "I need to check if",
+     "tokens": 4
+    },
+    {
+     "s": "I wonder if",
+     "tokens": 4
+    },
+    {
+     "s": "it's unclear if",
+     "tokens": 5
+    },
+    {
+     "s": "I'm not sure whether",
+     "tokens": 7
+    }
+   ],
+   "english_median": 4.5,
+   "write": "?",
+   "show": "? <open question>",
+   "tokens": 0,
+   "domain": "code",
+   "saves": 4.5
+  },
+  {
+   "id": "correction",
+   "meaning": "wait, that was wrong / let me reconsider",
+   "at": "start",
+   "english": [
+    {
+     "s": "wait, actually",
+     "tokens": 4
+    },
+    {
+     "s": "let me reconsider",
+     "tokens": 5
+    },
+    {
+     "s": "hmm, wait",
+     "tokens": 5
+    },
+    {
+     "s": "hold on, that's wrong",
+     "tokens": 8
+    }
+   ],
+   "english_median": 5.0,
+   "write": "!:",
+   "show": "!: <what was wrong> → <fix>",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 4.0
+  },
+  {
+   "id": "define",
+   "meaning": "let X be / call this X / is defined as",
+   "at": "mid",
+   "english": [
+    {
+     "s": "let's call this",
+     "tokens": 4
+    },
+    {
+     "s": "is defined as",
+     "tokens": 4
+    },
+    {
+     "s": "let me denote",
+     "tokens": 4
+    },
+    {
+     "s": "we'll refer to this as",
+     "tokens": 8
+    }
+   ],
+   "english_median": 4.0,
+   "write": ":=",
+   "show": "A := <thing>",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3.0
+  },
+  {
+   "id": "given",
+   "meaning": "we are given / we know that",
+   "at": "start",
+   "english": [
+    {
+     "s": "we know that",
+     "tokens": 2
+    },
+    {
+     "s": "we are given that",
+     "tokens": 3
+    },
+    {
+     "s": "the problem says",
+     "tokens": 3
+    }
+   ],
+   "english_median": 3,
+   "write": ":",
+   "show": "key: value",
+   "tokens": 0,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "goal",
+   "meaning": "we need to find / the user wants",
+   "at": "start",
+   "english": [
+    {
+     "s": "we need to find",
+     "tokens": 3
+    },
+    {
+     "s": "the question asks for",
+     "tokens": 4
+    },
+    {
+     "s": "the goal is to",
+     "tokens": 4
+    },
+    {
+     "s": "the user wants to know",
+     "tokens": 5
+    }
+   ],
+   "english_median": 4.0,
+   "write": "find:",
+   "show": "find: <target>",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3.0
+  },
+  {
+   "id": "if_then",
+   "meaning": "if ... then",
+   "at": "mid",
+   "english": [
+    {
+     "s": "in that case",
+     "tokens": 3
+    },
+    {
+     "s": "if so, then",
+     "tokens": 4
+    },
+    {
+     "s": "if that is the case then",
+     "tokens": 6
+    }
+   ],
+   "english_median": 4,
+   "write": "if",
+   "show": "if",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "else",
+   "meaning": "otherwise",
+   "at": "mid",
+   "english": [
+    {
+     "s": "otherwise",
+     "tokens": 4
+    },
+    {
+     "s": "if not, then",
+     "tokens": 4
+    },
+    {
+     "s": "in the other case",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "else",
+   "show": "else",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "case",
+   "meaning": "consider the case where",
+   "at": "mid",
+   "english": [
+    {
+     "s": "suppose that",
+     "tokens": 4
+    },
+    {
+     "s": "let's assume",
+     "tokens": 4
+    },
+    {
+     "s": "consider the case where",
+     "tokens": 5
+    }
+   ],
+   "english_median": 4,
+   "write": "case",
+   "show": "case",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "rule_out",
+   "meaning": "this option is ruled out",
+   "at": "mid",
+   "english": [
+    {
+     "s": "we can eliminate",
+     "tokens": 6
+    },
+    {
+     "s": "this option is ruled out",
+     "tokens": 7
+    },
+    {
+     "s": "this can't be the answer",
+     "tokens": 7
+    }
+   ],
+   "english_median": 7,
+   "write": "no",
+   "show": "no",
+   "tokens": 1,
+   "domain": "ascii",
+   "saves": 6
+  },
+  {
+   "id": "same",
+   "meaning": "unchanged / stays the same",
+   "at": "mid",
+   "english": [
+    {
+     "s": "stays the same",
+     "tokens": 4
+    },
+    {
+     "s": "is identical to",
+     "tokens": 4
+    },
+    {
+     "s": "remains unchanged",
+     "tokens": 6
+    }
+   ],
+   "english_median": 4,
+   "write": "==",
+   "show": "==",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "example",
+   "meaning": "for example",
+   "at": "mid",
+   "english": [
+    {
+     "s": "for example",
+     "tokens": 2
+    },
+    {
+     "s": "for instance",
+     "tokens": 3
+    }
+   ],
+   "english_median": 2.5,
+   "write": "eg",
+   "show": "eg",
+   "tokens": 2,
+   "domain": "ascii",
+   "saves": 0.5
+  },
+  {
+   "id": "i_e",
+   "meaning": "in other words / that is",
+   "at": "mid",
+   "english": [
+    {
+     "s": "in other words",
+     "tokens": 3
+    },
+    {
+     "s": "that is to say",
+     "tokens": 4
+    },
+    {
+     "s": "meaning that",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "=",
+   "show": "=",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3
+  },
+  {
+   "id": "count",
+   "meaning": "the number of",
+   "at": "mid",
+   "english": [
+    {
+     "s": "how many",
+     "tokens": 2
+    },
+    {
+     "s": "the number of",
+     "tokens": 3
+    },
+    {
+     "s": "the count of",
+     "tokens": 3
+    }
+   ],
+   "english_median": 3,
+   "write": "len(",
+   "show": "len(X)",
+   "tokens": 2,
+   "domain": "code",
+   "saves": 1
+  },
+  {
+   "id": "max",
+   "meaning": "the maximum of",
+   "at": "mid",
+   "english": [
+    {
+     "s": "the largest",
+     "tokens": 3
+    },
+    {
+     "s": "the biggest",
+     "tokens": 4
+    },
+    {
+     "s": "the maximum of",
+     "tokens": 5
+    }
+   ],
+   "english_median": 4,
+   "write": "max",
+   "show": "max",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "min",
+   "meaning": "the minimum of",
+   "at": "mid",
+   "english": [
+    {
+     "s": "the smallest",
+     "tokens": 4
+    },
+    {
+     "s": "the lowest",
+     "tokens": 4
+    },
+    {
+     "s": "the minimum of",
+     "tokens": 5
+    }
+   ],
+   "english_median": 4,
+   "write": "min",
+   "show": "min",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "returns",
+   "meaning": "the function returns / outputs",
+   "at": "mid",
+   "english": [
+    {
+     "s": "this returns",
+     "tokens": 3
+    },
+    {
+     "s": "the function returns",
+     "tokens": 4
+    },
+    {
+     "s": "it outputs",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "→",
+   "show": "→",
+   "tokens": 1,
+   "domain": "math",
+   "saves": 3
+  },
+  {
+   "id": "calls",
+   "meaning": "calls / invokes",
+   "at": "mid",
+   "english": [
+    {
+     "s": "invokes",
+     "tokens": 3
+    },
+    {
+     "s": "is called by",
+     "tokens": 3
+    },
+    {
+     "s": "calls the function",
+     "tokens": 4
+    }
+   ],
+   "english_median": 3,
+   "write": "()",
+   "show": "f()",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 2
+  },
+  {
+   "id": "step_sep",
+   "meaning": "and then / next / after that",
+   "at": "mid",
+   "english": [
+    {
+     "s": "and then",
+     "tokens": 2
+    },
+    {
+     "s": "next,",
+     "tokens": 2
+    },
+    {
+     "s": "then we",
+     "tokens": 2
+    },
+    {
+     "s": "after that,",
+     "tokens": 3
+    }
+   ],
+   "english_median": 2.0,
+   "write": "\n",
+   "show": "\n",
+   "tokens": 2,
+   "domain": "code",
+   "saves": 0.0
+  },
+  {
+   "id": "with_respect_to",
+   "meaning": "with respect to",
+   "at": "mid",
+   "english": [
+    {
+     "s": "regarding",
+     "tokens": 3
+    },
+    {
+     "s": "with respect to",
+     "tokens": 4
+    },
+    {
+     "s": "in terms of",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "re",
+   "show": "re",
+   "tokens": 1,
+   "domain": "ascii",
+   "saves": 3
+  },
+  {
+   "id": "plan",
+   "meaning": "my plan is / approach",
+   "at": "start",
+   "english": [
+    {
+     "s": "My plan is to",
+     "tokens": 4
+    },
+    {
+     "s": "The approach is to",
+     "tokens": 4
+    },
+    {
+     "s": "First, I'll",
+     "tokens": 4
+    }
+   ],
+   "english_median": 4,
+   "write": "do:",
+   "show": "do: a; b; c",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 3
+  },
+  {
+   "id": "note",
+   "meaning": "note that / keep in mind",
+   "at": "start",
+   "english": [
+    {
+     "s": "Note that",
+     "tokens": 2
+    },
+    {
+     "s": "Important:",
+     "tokens": 2
+    },
+    {
+     "s": "Keep in mind that",
+     "tokens": 6
+    }
+   ],
+   "english_median": 2,
+   "write": "#",
+   "show": "# <note, max 8 words>",
+   "tokens": 0,
+   "domain": "code",
+   "saves": 2
+  },
+  {
+   "id": "test",
+   "meaning": "let me verify",
+   "at": "start",
+   "english": [
+    {
+     "s": "Checking:",
+     "tokens": 3
+    },
+    {
+     "s": "Let me verify:",
+     "tokens": 5
+    },
+    {
+     "s": "Let me double-check:",
+     "tokens": 6
+    }
+   ],
+   "english_median": 5,
+   "write": "check:",
+   "show": "check: <expr> true|false",
+   "tokens": 1,
+   "domain": "code",
+   "saves": 4
+  },
+  {
+   "id": "option",
+   "meaning": "option B is ruled out because",
+   "at": "start",
+   "english": [
+    {
+     "s": "Option B is ruled out because",
+     "tokens": 8
+    },
+    {
+     "s": "We can eliminate option B since",
+     "tokens": 8
+    }
+   ],
+   "english_median": 8.0,
+   "write": "B: no,",
+   "show": "X: no, <why>",
+   "tokens": 3,
+   "domain": "code",
+   "saves": 5.0
+  }
+ ],
+ "keep_english": [
+  {
+   "id": "because",
+   "meaning": "because / since / due to",
+   "at": "mid",
+   "english": [
+    {
+     "s": "because",
+     "tokens": 1
+    },
+    {
+     "s": "since",
+     "tokens": 1
+    },
+    {
+     "s": "due to",
+     "tokens": 2
+    },
+    {
+     "s": "this is because",
+     "tokens": 3
+    }
+   ],
+   "english_median": 1.5,
+   "write": "because",
+   "tokens": 1,
+   "domain": "english",
+   "saves": 0
+  },
+  {
+   "id": "approx",
+   "meaning": "approximately / roughly",
+   "at": "mid",
+   "english": [
+    {
+     "s": "about",
+     "tokens": 1
+    },
+    {
+     "s": "approximately",
+     "tokens": 3
+    },
+    {
+     "s": "roughly",
+     "tokens": 3
+    }
+   ],
+   "english_median": 3,
+   "write": "about",
+   "tokens": 1,
+   "domain": "english",
+   "saves": 0
+  },
+  {
+   "id": "or",
+   "meaning": "or / either ... or",
+   "at": "mid",
+   "english": [
+    {
+     "s": "or",
+     "tokens": 1
+    },
+    {
+     "s": "either",
+     "tokens": 1
+    },
+    {
+     "s": "or else",
+     "tokens": 2
+    }
+   ],
+   "english_median": 1,
+   "write": "or",
+   "tokens": 1,
+   "domain": "english",
+   "saves": 0
+  }
+ ],
+ "banned": [
+  {
+   "s": "⊥",
+   "tokens": 5,
+   "use": "contra"
+  },
+  {
+   "s": "^2",
+   "tokens": 4,
+   "use": "²"
+  },
+  {
+   "s": "e.g.",
+   "tokens": 4,
+   "use": "eg"
+  },
+  {
+   "s": "i.e.",
+   "tokens": 4,
+   "use": "="
+  },
+  {
+   "s": "¬",
+   "tokens": 4,
+   "use": "not"
+  },
+  {
+   "s": "÷",
+   "tokens": 4,
+   "use": "/"
+  },
+  {
+   "s": "↑",
+   "tokens": 4,
+   "use": "+"
+  },
+  {
+   "s": "↓",
+   "tokens": 4,
+   "use": "-"
+  },
+  {
+   "s": "∀",
+   "tokens": 4,
+   "use": "for"
+  },
+  {
+   "s": "∃",
+   "tokens": 4,
+   "use": "any"
+  },
+  {
+   "s": "∅",
+   "tokens": 4,
+   "use": "none"
+  },
+  {
+   "s": "∈",
+   "tokens": 4,
+   "use": "in"
+  },
+  {
+   "s": "∧",
+   "tokens": 4,
+   "use": "&"
+  },
+  {
+   "s": "∨",
+   "tokens": 4,
+   "use": "or"
+  },
+  {
+   "s": "∴",
+   "tokens": 4,
+   "use": "→"
+  },
+  {
+   "s": "∵",
+   "tokens": 4,
+   "use": "because"
+  },
+  {
+   "s": "≈",
+   "tokens": 4,
+   "use": "about"
+  },
+  {
+   "s": "≠",
+   "tokens": 4,
+   "use": "!="
+  },
+  {
+   "s": "≤",
+   "tokens": 4,
+   "use": "<="
+  },
+  {
+   "s": "≥",
+   "tokens": 4,
+   "use": ">="
+  },
+  {
+   "s": "✓",
+   "tokens": 4,
+   "use": "true"
+  },
+  {
+   "s": "✗",
+   "tokens": 4,
+   "use": "false"
+  },
+  {
+   "s": "**2",
+   "tokens": 3,
+   "use": "²"
+  },
+  {
+   "s": "b/c",
+   "tokens": 3,
+   "use": "because"
+  },
+  {
+   "s": "~",
+   "tokens": 3,
+   "use": "about"
+  },
+  {
+   "s": "!",
+   "tokens": 2,
+   "use": "not"
+  },
+  {
+   "s": "-=",
+   "tokens": 2,
+   "use": "-"
+  },
+  {
+   "s": "->",
+   "tokens": 2,
+   "use": "→"
+  },
+  {
+   "s": "<-",
+   "tokens": 2,
+   "use": "because"
+  },
+  {
+   "s": "ans:",
+   "tokens": 2,
+   "use": "=>"
+  },
+  {
+   "s": "fix:",
+   "tokens": 2,
+   "use": "!:"
+  },
+  {
+   "s": "goal:",
+   "tokens": 2,
+   "use": "find:"
+  },
+  {
+   "s": "plan:",
+   "tokens": 2,
+   "use": "do:"
+  },
+  {
+   "s": "redo:",
+   "tokens": 2,
+   "use": "!:"
+  },
+  {
+   "s": "given:",
+   "tokens": 1,
+   "use": ":"
+  },
+  {
+   "s": "note:",
+   "tokens": 1,
+   "use": "#"
+  }
+ ],
+ "aliases": {
+  "H": 1,
+  "P": 1,
+  "C1": 3,
+  "F1": 3,
+  "H1": 3,
+  "x1": 3,
+  "_a": 2,
+  "AB": 2,
+  "the payment retry handler": 7,
+  "src/pay/retryQueue.ts": 13
+ },
+ "fillers": [
+  {
+   "s": "Let me think about this.",
+   "tokens": 6
+  },
+  {
+   "s": "Looking at this,",
+   "tokens": 5
+  },
+  {
+   "s": "Let me double-check",
+   "tokens": 5
+  },
+  {
+   "s": "That makes sense.",
+   "tokens": 5
+  },
+  {
+   "s": "Okay, so",
+   "tokens": 4
+  },
+  {
+   "s": "Hmm,",
+   "tokens": 4
+  },
+  {
+   "s": "The user is asking",
+   "tokens": 4
+  },
+  {
+   "s": "Essentially,",
+   "tokens": 4
+  },
+  {
+   "s": "Alright,",
+   "tokens": 3
+  },
+  {
+   "s": "The user wants",
+   "tokens": 3
+  },
+  {
+   "s": "Actually,",
+   "tokens": 3
+  },
+  {
+   "s": "Basically,",
+   "tokens": 3
+  },
+  {
+   "s": "Let me",
+   "tokens": 2
+  },
+  {
+   "s": "I need to",
+   "tokens": 2
+  },
+  {
+   "s": "Now,",
+   "tokens": 2
+  },
+  {
+   "s": "So basically",
+   "tokens": 2
+  },
+  {
+   "s": "Great,",
+   "tokens": 2
+  },
+  {
+   "s": "Good,",
+   "tokens": 2
+  },
+  {
+   "s": "I think",
+   "tokens": 1
+  },
+  {
+   "s": "I should",
+   "tokens": 1
+  },
+  {
+   "s": "First,",
+   "tokens": 1
+  }
+ ],
+ "languages": {
+  "en": 38,
+  "hr": 59,
+  "de": 75,
+  "es": 56
+ }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "steno",
+  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "version": "0.1.0",
+  "contextFileName": "GEMINI.md"
+}

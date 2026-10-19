@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: ["18", "22"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Hook, config and installer tests
+        shell: bash
+        run: node --test tests/*.test.js
+      - name: Lexicon and eval scoring tests
+        shell: bash
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Generated lexicon is current
+        shell: bash
+        run: python scripts/build_lexicon.py --check
+      - name: Eval plan builds (no calls)
+        shell: bash
+        run: python evals/run.py --dry-run --out /tmp/plan.jsonl

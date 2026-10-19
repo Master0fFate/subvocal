@@ -1,0 +1,1130 @@
+{
+ "version": 1,
+ "about": "Concepts that reasoning traces express over and over. 'english' lists the forms models typically write; 'notation' lists replacement candidates. scripts/measure_tokens.py measures every string with a real tokenizer; scripts/build_lexicon.py keeps a concept only when its best notation is strictly cheaper than the cheapest common English form, or ties it while being code/math notation that also gives the line its structure. Domains: code and math are in-distribution for every major model; 'ascii' marks plain-ASCII shorthand.",
+ "concepts": [
+  {
+   "id": "implies",
+   "meaning": "therefore / so / which means",
+   "english": [
+    "so",
+    "therefore",
+    "which means",
+    "this means that",
+    "it follows that",
+    "which implies that"
+   ],
+   "notation": [
+    {
+     "s": "→",
+     "domain": "math"
+    },
+    {
+     "s": "=>",
+     "domain": "code"
+    },
+    {
+     "s": "->",
+     "domain": "code"
+    },
+    {
+     "s": "∴",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "conclude",
+   "meaning": "the final answer / conclusion is",
+   "english": [
+    "the answer is",
+    "so the final answer is",
+    "in conclusion",
+    "therefore the result is"
+   ],
+   "notation": [
+    {
+     "s": "=>",
+     "domain": "code",
+     "show": "=> <result>"
+    },
+    {
+     "s": "ans:",
+     "domain": "ascii"
+    },
+    {
+     "s": "∴",
+     "domain": "math"
+    }
+   ],
+   "at": "start"
+  },
+  {
+   "id": "because",
+   "meaning": "because / since / due to",
+   "english": [
+    "because",
+    "since",
+    "due to",
+    "this is because"
+   ],
+   "notation": [
+    {
+     "s": "<-",
+     "domain": "code"
+    },
+    {
+     "s": "∵",
+     "domain": "math"
+    },
+    {
+     "s": "bc",
+     "domain": "ascii"
+    },
+    {
+     "s": "b/c",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "equals",
+   "meaning": "is equal to / gives / we get",
+   "english": [
+    "is equal to",
+    "equals",
+    "we get",
+    "which gives",
+    "comes out to"
+   ],
+   "notation": [
+    {
+     "s": "=",
+     "domain": "math"
+    },
+    {
+     "s": "==",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "not_equal",
+   "meaning": "is not equal to / differs from",
+   "english": [
+    "is not equal to",
+    "is different from",
+    "does not match"
+   ],
+   "notation": [
+    {
+     "s": "!=",
+     "domain": "code"
+    },
+    {
+     "s": "≠",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "greater",
+   "meaning": "is greater than",
+   "english": [
+    "is greater than",
+    "is larger than",
+    "is more than"
+   ],
+   "notation": [
+    {
+     "s": ">",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "less",
+   "meaning": "is less than",
+   "english": [
+    "is less than",
+    "is smaller than",
+    "is fewer than"
+   ],
+   "notation": [
+    {
+     "s": "<",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "at_least",
+   "meaning": "at least / greater than or equal to",
+   "english": [
+    "at least",
+    "greater than or equal to",
+    "no less than"
+   ],
+   "notation": [
+    {
+     "s": ">=",
+     "domain": "code"
+    },
+    {
+     "s": "≥",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "at_most",
+   "meaning": "at most / less than or equal to",
+   "english": [
+    "at most",
+    "less than or equal to",
+    "no more than"
+   ],
+   "notation": [
+    {
+     "s": "<=",
+     "domain": "code"
+    },
+    {
+     "s": "≤",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "approx",
+   "meaning": "approximately / roughly",
+   "english": [
+    "approximately",
+    "roughly",
+    "about"
+   ],
+   "notation": [
+    {
+     "s": "~",
+     "domain": "math"
+    },
+    {
+     "s": "≈",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "and",
+   "meaning": "and also / as well as",
+   "english": [
+    "and also",
+    "as well as",
+    "and"
+   ],
+   "notation": [
+    {
+     "s": "&",
+     "domain": "code"
+    },
+    {
+     "s": "+",
+     "domain": "math"
+    },
+    {
+     "s": "&&",
+     "domain": "code"
+    },
+    {
+     "s": "∧",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "or",
+   "meaning": "or / either ... or",
+   "english": [
+    "or",
+    "either",
+    "or else"
+   ],
+   "notation": [
+    {
+     "s": "|",
+     "domain": "code"
+    },
+    {
+     "s": "||",
+     "domain": "code"
+    },
+    {
+     "s": "∨",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "not",
+   "meaning": "not / is not",
+   "english": [
+    "not",
+    "is not",
+    "isn't"
+   ],
+   "notation": [
+    {
+     "s": "!",
+     "domain": "code"
+    },
+    {
+     "s": "¬",
+     "domain": "math"
+    },
+    {
+     "s": "not",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "for_all",
+   "meaning": "for every / for all",
+   "english": [
+    "for every",
+    "for all",
+    "for each"
+   ],
+   "notation": [
+    {
+     "s": "for",
+     "domain": "code"
+    },
+    {
+     "s": "all",
+     "domain": "ascii"
+    },
+    {
+     "s": "each",
+     "domain": "ascii"
+    },
+    {
+     "s": "∀",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "exists",
+   "meaning": "there exists / there is some",
+   "english": [
+    "there exists",
+    "there is a",
+    "there is some"
+   ],
+   "notation": [
+    {
+     "s": "any",
+     "domain": "code"
+    },
+    {
+     "s": "some",
+     "domain": "ascii"
+    },
+    {
+     "s": "∃",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "member",
+   "meaning": "is one of / is in / belongs to",
+   "english": [
+    "is one of",
+    "is in the set",
+    "belongs to",
+    "is contained in"
+   ],
+   "notation": [
+    {
+     "s": "in",
+     "domain": "code"
+    },
+    {
+     "s": "∈",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "empty",
+   "meaning": "nothing / no such / empty",
+   "english": [
+    "there is nothing",
+    "does not exist",
+    "is empty",
+    "none of them"
+   ],
+   "notation": [
+    {
+     "s": "none",
+     "domain": "code"
+    },
+    {
+     "s": "∅",
+     "domain": "math"
+    },
+    {
+     "s": "null",
+     "domain": "code"
+    },
+    {
+     "s": "0",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "times",
+   "meaning": "times / multiplied by",
+   "english": [
+    "times",
+    "multiplied by"
+   ],
+   "notation": [
+    {
+     "s": "*",
+     "domain": "code"
+    },
+    {
+     "s": "×",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "divided",
+   "meaning": "divided by / per",
+   "english": [
+    "divided by",
+    "per",
+    "out of"
+   ],
+   "notation": [
+    {
+     "s": "/",
+     "domain": "math"
+    },
+    {
+     "s": "÷",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "squared",
+   "meaning": "squared / to the power",
+   "english": [
+    "squared",
+    "to the power of",
+    "raised to"
+   ],
+   "notation": [
+    {
+     "s": "^2",
+     "domain": "math"
+    },
+    {
+     "s": "²",
+     "domain": "math",
+     "show": "x²"
+    },
+    {
+     "s": "**2",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "increase",
+   "meaning": "increases / goes up by",
+   "english": [
+    "increases by",
+    "goes up by",
+    "grows"
+   ],
+   "notation": [
+    {
+     "s": "+",
+     "domain": "math"
+    },
+    {
+     "s": "+=",
+     "domain": "code"
+    },
+    {
+     "s": "↑",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "decrease",
+   "meaning": "decreases / goes down by",
+   "english": [
+    "decreases by",
+    "goes down by",
+    "drops by"
+   ],
+   "notation": [
+    {
+     "s": "-",
+     "domain": "math"
+    },
+    {
+     "s": "-=",
+     "domain": "code"
+    },
+    {
+     "s": "↓",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "check_ok",
+   "meaning": "verified / that checks out",
+   "english": [
+    "that checks out",
+    "this is correct",
+    "that's right",
+    "verified"
+   ],
+   "notation": [
+    {
+     "s": "true",
+     "domain": "code"
+    },
+    {
+     "s": "ok",
+     "domain": "code"
+    },
+    {
+     "s": "yes",
+     "domain": "ascii"
+    },
+    {
+     "s": "✓",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "check_fail",
+   "meaning": "fails / that's wrong",
+   "english": [
+    "that doesn't work",
+    "that's wrong",
+    "this is incorrect",
+    "fails"
+   ],
+   "notation": [
+    {
+     "s": "false",
+     "domain": "code"
+    },
+    {
+     "s": "no",
+     "domain": "ascii"
+    },
+    {
+     "s": "fail",
+     "domain": "code"
+    },
+    {
+     "s": "✗",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "contradiction",
+   "meaning": "contradiction / impossible",
+   "english": [
+    "this is a contradiction",
+    "that's impossible",
+    "this contradicts"
+   ],
+   "notation": [
+    {
+     "s": "contra",
+     "domain": "ascii"
+    },
+    {
+     "s": "⊥",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "unknown",
+   "meaning": "not sure yet / need to check",
+   "english": [
+    "I'm not sure whether",
+    "I need to check if",
+    "it's unclear if",
+    "I wonder if"
+   ],
+   "notation": [
+    {
+     "s": "?",
+     "domain": "code",
+     "show": "? <open question>"
+    },
+    {
+     "s": "check:",
+     "domain": "code"
+    }
+   ],
+   "at": "start"
+  },
+  {
+   "id": "correction",
+   "meaning": "wait, that was wrong / let me reconsider",
+   "english": [
+    "wait, actually",
+    "hold on, that's wrong",
+    "let me reconsider",
+    "hmm, wait"
+   ],
+   "notation": [
+    {
+     "s": "!:",
+     "domain": "code",
+     "show": "!: <what was wrong> → <fix>"
+    },
+    {
+     "s": "fix:",
+     "domain": "code"
+    },
+    {
+     "s": "redo:",
+     "domain": "ascii"
+    }
+   ],
+   "at": "start"
+  },
+  {
+   "id": "define",
+   "meaning": "let X be / call this X / is defined as",
+   "english": [
+    "let's call this",
+    "is defined as",
+    "let me denote",
+    "we'll refer to this as"
+   ],
+   "notation": [
+    {
+     "s": ":=",
+     "domain": "math",
+     "show": "A := <thing>"
+    },
+    {
+     "s": "=",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "given",
+   "meaning": "we are given / we know that",
+   "english": [
+    "we are given that",
+    "we know that",
+    "the problem says"
+   ],
+   "notation": [
+    {
+     "s": "given:",
+     "domain": "math"
+    },
+    {
+     "s": ":",
+     "domain": "code",
+     "show": "key: value"
+    }
+   ],
+   "at": "start"
+  },
+  {
+   "id": "goal",
+   "meaning": "we need to find / the user wants",
+   "english": [
+    "we need to find",
+    "the user wants to know",
+    "the question asks for",
+    "the goal is to"
+   ],
+   "notation": [
+    {
+     "s": "find:",
+     "domain": "math",
+     "show": "find: <target>"
+    },
+    {
+     "s": "goal:",
+     "domain": "code"
+    },
+    {
+     "s": "?=",
+     "domain": "math"
+    }
+   ],
+   "at": "start"
+  },
+  {
+   "id": "if_then",
+   "meaning": "if ... then",
+   "english": [
+    "if that is the case then",
+    "in that case",
+    "if so, then"
+   ],
+   "notation": [
+    {
+     "s": "if",
+     "domain": "code"
+    },
+    {
+     "s": "→",
+     "domain": "math"
+    },
+    {
+     "s": "->",
+     "domain": "code"
+    }
+   ],
+   "may_share": [
+    "implies"
+   ]
+  },
+  {
+   "id": "else",
+   "meaning": "otherwise",
+   "english": [
+    "otherwise",
+    "if not, then",
+    "in the other case"
+   ],
+   "notation": [
+    {
+     "s": "else",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "case",
+   "meaning": "consider the case where",
+   "english": [
+    "consider the case where",
+    "suppose that",
+    "let's assume"
+   ],
+   "notation": [
+    {
+     "s": "case",
+     "domain": "code"
+    },
+    {
+     "s": "if",
+     "domain": "code"
+    },
+    {
+     "s": "assume",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "rule_out",
+   "meaning": "this option is ruled out",
+   "english": [
+    "this option is ruled out",
+    "we can eliminate",
+    "this can't be the answer"
+   ],
+   "notation": [
+    {
+     "s": "no",
+     "domain": "ascii"
+    },
+    {
+     "s": "✗",
+     "domain": "math"
+    },
+    {
+     "s": "drop",
+     "domain": "code"
+    }
+   ],
+   "may_share": [
+    "check_fail"
+   ]
+  },
+  {
+   "id": "same",
+   "meaning": "unchanged / stays the same",
+   "english": [
+    "stays the same",
+    "remains unchanged",
+    "is identical to"
+   ],
+   "notation": [
+    {
+     "s": "same",
+     "domain": "ascii"
+    },
+    {
+     "s": "==",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "example",
+   "meaning": "for example",
+   "english": [
+    "for example",
+    "for instance"
+   ],
+   "notation": [
+    {
+     "s": "eg",
+     "domain": "ascii"
+    },
+    {
+     "s": "e.g.",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "i_e",
+   "meaning": "in other words / that is",
+   "english": [
+    "in other words",
+    "that is to say",
+    "meaning that"
+   ],
+   "notation": [
+    {
+     "s": "=",
+     "domain": "math"
+    },
+    {
+     "s": "i.e.",
+     "domain": "ascii"
+    }
+   ],
+   "may_share": [
+    "equals"
+   ]
+  },
+  {
+   "id": "count",
+   "meaning": "the number of",
+   "english": [
+    "the number of",
+    "the count of",
+    "how many"
+   ],
+   "notation": [
+    {
+     "s": "len(",
+     "domain": "code",
+     "show": "len(X)"
+    },
+    {
+     "s": "n(",
+     "domain": "math"
+    }
+   ]
+  },
+  {
+   "id": "max",
+   "meaning": "the maximum of",
+   "english": [
+    "the maximum of",
+    "the largest",
+    "the biggest"
+   ],
+   "notation": [
+    {
+     "s": "max",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "min",
+   "meaning": "the minimum of",
+   "english": [
+    "the minimum of",
+    "the smallest",
+    "the lowest"
+   ],
+   "notation": [
+    {
+     "s": "min",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "returns",
+   "meaning": "the function returns / outputs",
+   "english": [
+    "the function returns",
+    "this returns",
+    "it outputs"
+   ],
+   "notation": [
+    {
+     "s": "→",
+     "domain": "math"
+    },
+    {
+     "s": "ret",
+     "domain": "code"
+    },
+    {
+     "s": "->",
+     "domain": "code"
+    }
+   ],
+   "may_share": [
+    "implies"
+   ]
+  },
+  {
+   "id": "calls",
+   "meaning": "calls / invokes",
+   "english": [
+    "calls the function",
+    "invokes",
+    "is called by"
+   ],
+   "notation": [
+    {
+     "s": "()",
+     "domain": "code",
+     "show": "f()"
+    },
+    {
+     "s": "calls",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "step_sep",
+   "meaning": "and then / next / after that",
+   "english": [
+    "and then",
+    "next,",
+    "after that,",
+    "then we"
+   ],
+   "notation": [
+    {
+     "s": "\n",
+     "domain": "code"
+    },
+    {
+     "s": ";",
+     "domain": "code"
+    }
+   ],
+   "structural": true,
+   "note": "Grammar rule, not a substitution: the probe puts \" b\" after the newline, which inflates its count. A bare newline is 1 token."
+  },
+  {
+   "id": "with_respect_to",
+   "meaning": "with respect to",
+   "english": [
+    "with respect to",
+    "in terms of",
+    "regarding"
+   ],
+   "notation": [
+    {
+     "s": "wrt",
+     "domain": "ascii"
+    },
+    {
+     "s": "re",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "plan",
+   "at": "start",
+   "meaning": "my plan is / approach",
+   "english": [
+    "My plan is to",
+    "The approach is to",
+    "First, I'll"
+   ],
+   "notation": [
+    {
+     "s": "plan:",
+     "domain": "code"
+    },
+    {
+     "s": "do:",
+     "domain": "code",
+     "show": "do: a; b; c"
+    },
+    {
+     "s": "1.",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "note",
+   "at": "start",
+   "meaning": "note that / keep in mind",
+   "english": [
+    "Note that",
+    "Keep in mind that",
+    "Important:"
+   ],
+   "notation": [
+    {
+     "s": "#",
+     "domain": "code",
+     "show": "# <note, max 8 words>"
+    },
+    {
+     "s": "//",
+     "domain": "code"
+    },
+    {
+     "s": "note:",
+     "domain": "ascii"
+    }
+   ]
+  },
+  {
+   "id": "test",
+   "at": "start",
+   "meaning": "let me verify",
+   "english": [
+    "Let me verify:",
+    "Let me double-check:",
+    "Checking:"
+   ],
+   "notation": [
+    {
+     "s": "check:",
+     "domain": "code",
+     "show": "check: <expr> true|false"
+    },
+    {
+     "s": "test:",
+     "domain": "code"
+    },
+    {
+     "s": "assert",
+     "domain": "code"
+    }
+   ]
+  },
+  {
+   "id": "option",
+   "at": "start",
+   "meaning": "option B is ruled out because",
+   "english": [
+    "Option B is ruled out because",
+    "We can eliminate option B since"
+   ],
+   "notation": [
+    {
+     "s": "B: no,",
+     "domain": "code",
+     "show": "X: no, <why>"
+    },
+    {
+     "s": "B: false,",
+     "domain": "code"
+    },
+    {
+     "s": "B drop:",
+     "domain": "code"
+    }
+   ]
+  }
+ ],
+ "fillers": [
+  "Okay, so",
+  "Let me think about this.",
+  "Let me",
+  "Hmm,",
+  "Alright,",
+  "I think",
+  "I need to",
+  "I should",
+  "The user is asking",
+  "The user wants",
+  "First,",
+  "Now,",
+  "Actually,",
+  "Basically,",
+  "Essentially,",
+  "So basically",
+  "Great,",
+  "Good,",
+  "Looking at this,",
+  "Let me double-check",
+  "That makes sense."
+ ],
+ "aliases": [
+  "H",
+  "P",
+  "C1",
+  "F1",
+  "H1",
+  "x1",
+  "_a",
+  "AB",
+  "the payment retry handler",
+  "src/pay/retryQueue.ts"
+ ],
+ "language_pairs": [
+  {
+   "en": "the function returns null when the cache is empty",
+   "hr": "funkcija vraća null kada je predmemorija prazna",
+   "de": "die Funktion gibt null zurück, wenn der Cache leer ist",
+   "es": "la función devuelve null cuando la caché está vacía"
+  },
+  {
+   "en": "so the total cost is the price times the quantity",
+   "hr": "dakle ukupni trošak je cijena puta količina",
+   "de": "also sind die Gesamtkosten der Preis mal die Menge",
+   "es": "así que el costo total es el precio por la cantidad"
+  },
+  {
+   "en": "we need to check whether the user is logged in first",
+   "hr": "moramo prvo provjeriti je li korisnik prijavljen",
+   "de": "wir müssen zuerst prüfen, ob der Benutzer angemeldet ist",
+   "es": "primero debemos comprobar si el usuario ha iniciado sesión"
+  }
+ ],
+ "anchors": [
+  "the",
+  "the the the"
+ ]
+}

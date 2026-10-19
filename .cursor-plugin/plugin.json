@@ -1,0 +1,11 @@
+{
+  "name": "steno",
+  "displayName": "Steno",
+  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "version": "0.1.0",
+  "author": {
+    "name": "steno contributors"
+  },
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks-cursor.json"
+}

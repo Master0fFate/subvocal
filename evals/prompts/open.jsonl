@@ -1,0 +1,6 @@
+{"id": "process-thread", "prompt": "Explain the difference between a process and a thread.", "lang": "en"}
+{"id": "react-rerender", "prompt": "Why does my React component re-render every time when I pass an object literal as a prop, even though the values don't change?", "lang": "en"}
+{"id": "uuid-pk", "prompt": "What are the pros and cons of using UUIDs as primary keys in PostgreSQL?", "lang": "en"}
+{"id": "decline-meeting", "prompt": "Write a short, friendly message declining a meeting invitation because of a schedule conflict.", "lang": "en"}
+{"id": "https", "prompt": "Explain how HTTPS protects data in transit.", "lang": "en"}
+{"id": "rekurzija-hr", "prompt": "Objasni ukratko što je rekurzija i daj jedan primjer u Pythonu.", "lang": "hr"}

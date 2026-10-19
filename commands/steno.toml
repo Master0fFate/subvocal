@@ -1,0 +1,2 @@
+description = "Steno thinking: reasoning in measured shorthand, reply in normal prose (/steno, /steno ultra, /steno off, /steno status)"
+prompt = "Switch steno mode. Argument: {{args}} (empty activates steno; ultra activates ultrasteno; off deactivates; status only reports the current mode). Follow the steno skill's rules from your loaded context: they govern your thinking only. Your reply stays exactly as it would be with steno off. Confirm the switch in one short line."

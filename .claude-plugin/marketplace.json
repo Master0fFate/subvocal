@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "steno",
+  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "owner": {
+    "name": "steno contributors"
+  },
+  "plugins": [
+    {
+      "name": "steno",
+      "description": "Think in steno, reply in prose. Measured shorthand for reasoning; the answer stays normal.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

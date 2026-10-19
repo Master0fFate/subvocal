@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+lexicon/.cache/
+evals/snapshots/*.log
+.env
+.env.local

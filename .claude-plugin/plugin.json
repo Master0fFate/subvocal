@@ -1,0 +1,54 @@
+{
+  "name": "steno",
+  "version": "0.1.0",
+  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "author": {
+    "name": "steno contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "tokens",
+    "reasoning",
+    "thinking",
+    "compression",
+    "cost"
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-activate.js\"",
+            "timeout": 10,
+            "statusMessage": "Loading steno mode..."
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-activate.js\" --subagent",
+            "timeout": 10,
+            "statusMessage": "Loading steno mode for subagent..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-mode-tracker.js\"",
+            "timeout": 10,
+            "statusMessage": "Tracking steno mode..."
+          }
+        ]
+      }
+    ]
+  }
+}
