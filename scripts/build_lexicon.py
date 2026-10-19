@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Turn measured token costs into the subvocal lexicon, and write it into the skills.
+"""Turn measured token costs into the subvocal lexicon, and write it into docs/DIALECT.md.
 
 Input:  lexicon/candidates.json   concepts, English forms, notation candidates
         lexicon/measured.json     real token costs (scripts/measure_tokens.py)
 Output: lexicon/lexicon.json      the chosen dialect, with every number behind it
-        skills/*/SKILL.md         the block between the LEXICON markers
+        docs/DIALECT.md           the block between the LEXICON markers
 
 Selection rule, per concept:
 
@@ -22,7 +22,7 @@ the banned list. That list is the point of measuring: `∴` looks like one
 character and costs 4 tokens.
 
 Usage:
-  python3 scripts/build_lexicon.py           # rebuild lexicon.json + skills
+  python3 scripts/build_lexicon.py           # rebuild lexicon.json + DIALECT.md
   python3 scripts/build_lexicon.py --check   # CI: fail if anything is stale
 """
 
@@ -38,7 +38,7 @@ REPO = Path(__file__).resolve().parent.parent
 CANDIDATES = REPO / "lexicon" / "candidates.json"
 MEASURED = REPO / "lexicon" / "measured.json"
 LEXICON = REPO / "lexicon" / "lexicon.json"
-SKILLS = [REPO / "skills" / "subvocal" / "SKILL.md", REPO / "skills" / "ultrasubvocal" / "SKILL.md"]
+DIALECT = REPO / "docs" / "DIALECT.md"
 BEGIN = "<!-- LEXICON:BEGIN"
 END = "<!-- LEXICON:END -->"
 DOMAIN_RANK = {"code": 0, "math": 0, "ascii": 1}
@@ -189,7 +189,7 @@ def splice(text: str, block: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--check", action="store_true", help="exit 1 if lexicon.json or a skill is out of date")
+    ap.add_argument("--check", action="store_true", help="exit 1 if lexicon.json or DIALECT.md is out of date")
     args = ap.parse_args()
 
     cands = json.loads(CANDIDATES.read_text(encoding="utf-8"))
@@ -203,13 +203,12 @@ def main() -> None:
         stale.append(LEXICON)
         if not args.check:
             LEXICON.write_text(lex_text, encoding="utf-8")
-    for skill in SKILLS:
-        old = skill.read_text(encoding="utf-8")
-        new = splice(old, block)
-        if new != old:
-            stale.append(skill)
-            if not args.check:
-                skill.write_text(new, encoding="utf-8")
+    old = DIALECT.read_text(encoding="utf-8")
+    new = splice(old, block)
+    if new != old:
+        stale.append(DIALECT)
+        if not args.check:
+            DIALECT.write_text(new, encoding="utf-8")
 
     if args.check and stale:
         sys.exit("build_lexicon: stale, run scripts/build_lexicon.py: " + ", ".join(str(p.relative_to(REPO)) for p in stale))
