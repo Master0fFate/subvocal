@@ -1,30 +1,32 @@
 # Working on subvocal
 
-Subvocal compresses a model's reasoning into measured shorthand while the reply
-stays normal prose. This file is for anyone (person or agent) changing this
+Subvocal asks a model to keep its reasoning concise while the reply stays
+normal prose. This file is for anyone (person or agent) changing this
 repository.
 
 ## Layout
 
 ```
-skills/subvocal/SKILL.md        strict mode: the full dialect, opt-in
-skills/ultrasubvocal/SKILL.md   tighter variant, layered on subvocal
-skills/subvocal-lite/SKILL.md   light mode: one measured instruction, the default everywhere
+skills/subvocal/SKILL.md        default mode: one measured sentence
+skills/ultrasubvocal/SKILL.md   more aggressive mode: minimum draft per thinking step
 skills/subvocal-lexicon/        skill that re-runs the lexicon pipeline
 lexicon/candidates.json      concepts, English forms, notation candidates
 lexicon/measured.json        real token counts (generated)
 lexicon/lexicon.json         chosen dialect + every number behind it (generated)
 scripts/mine_phrases.py      find phrases traces repeat
 scripts/measure_tokens.py    measure strings with a real tokenizer
-scripts/build_lexicon.py     choose forms, write lexicon.json + the skill block
+scripts/build_lexicon.py     choose forms, write lexicon.json + the DIALECT.md block
 src/hooks/                   Claude Code / Codex / Cursor / Copilot hooks (Node, zero deps)
 installer/install.js         standalone Claude Code install (no marketplace)
 evals/                       thinking-token, accuracy and reply-unchanged eval
-docs/                        dialect spec, honest numbers, model support
+docs/                        dialect research doc, honest numbers, model support
 tests/                       node:test for hooks, unittest for pipeline + scoring
 ```
 
 ## Rules for changing the dialect
+
+The dialect is a research artifact and no mode injects it. It lives in
+`docs/DIALECT.md`; the two modes are plain English in their skill files.
 
 1. Never edit the block between `<!-- LEXICON:BEGIN` and `<!-- LEXICON:END -->`
    by hand. Change `lexicon/candidates.json`, run
@@ -32,11 +34,10 @@ tests/                       node:test for hooks, unittest for pipeline + scorin
 2. A notation form is kept only when it is strictly cheaper than the median
    English form it replaces. Ties go to plain English.
 3. Prefer code and math idioms over invented abbreviations.
-4. No rule may remove a reasoning step, check or case. Subvocal compresses
+4. No rule may remove a reasoning step, check or case. The dialect compresses
    encoding, not content.
-5. No wording that asks the model to hide, disguise or omit reasoning. The
-   legibility rule (rule 11 in `skills/subvocal/SKILL.md`) is load-bearing, and
-   a test fails if concealment wording appears in injected text.
+5. No wording that asks the model to hide, disguise or omit reasoning. A test
+   fails if concealment wording appears in injected text.
 
 ## Checks
 

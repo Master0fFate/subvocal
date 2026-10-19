@@ -23,4 +23,4 @@ leaks and refusals.
 
 - Rules that skip or shorten reasoning steps or checks.
 - Wording that asks a model to hide, disguise or omit what it is reasoning about.
-- Hand edits to the generated `LEXICON` block.
+- Hand edits to the generated `LEXICON` block in `docs/DIALECT.md`.

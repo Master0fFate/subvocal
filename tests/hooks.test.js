@@ -39,17 +39,14 @@ function ctx(out) {
 // ---------------------------------------------------------------- parsing
 
 test('slash commands', () => {
-  assert.deepEqual(parseCommand('/subvocal'), { action: 'set', mode: 'auto' });
-  assert.deepEqual(parseCommand('/subvocal strict'), { action: 'set', mode: 'subvocal' });
-  assert.deepEqual(parseCommand('/subvocal lite'), { action: 'set', mode: 'lite' });
+  assert.deepEqual(parseCommand('/subvocal'), { action: 'set', mode: 'subvocal' });
+  assert.deepEqual(parseCommand('/subvocal lite'), { action: 'set', mode: 'subvocal' });
   assert.deepEqual(parseCommand('/subvocal ultra'), { action: 'set', mode: 'ultrasubvocal' });
   assert.deepEqual(parseCommand('/ultrasubvocal'), { action: 'set', mode: 'ultrasubvocal' });
-  assert.deepEqual(parseCommand('/subvocal-lite'), { action: 'set', mode: 'lite' });
-  assert.deepEqual(parseCommand('/subvocal:subvocal-lite'), { action: 'set', mode: 'lite' });
   assert.deepEqual(parseCommand('/subvocal:ultrasubvocal'), { action: 'set', mode: 'ultrasubvocal' });
   assert.deepEqual(parseCommand('/subvocal off'), { action: 'set', mode: 'off' });
   assert.deepEqual(parseCommand('/subvocal status'), { action: 'status' });
-  assert.deepEqual(parseCommand('  /SUBVOCAL Strict  then explain this'), { action: 'set', mode: 'subvocal' });
+  assert.deepEqual(parseCommand('  /SUBVOCAL Ultra  then explain this'), { action: 'set', mode: 'ultrasubvocal' });
 });
 
 test('slash commands do not match lookalikes', () => {
@@ -61,8 +58,9 @@ test('slash commands do not match lookalikes', () => {
 test('natural language switches only when short and explicit', () => {
   assert.deepEqual(parseCommand('stop subvocal'), { action: 'set', mode: 'off' });
   assert.deepEqual(parseCommand('Normal mode please.'), { action: 'set', mode: 'off' });
-  assert.deepEqual(parseCommand('subvocal lite'), { action: 'set', mode: 'lite' });
-  assert.deepEqual(parseCommand('think in subvocal'), { action: 'set', mode: 'auto' });
+  assert.deepEqual(parseCommand('subvocal mode'), { action: 'set', mode: 'subvocal' });
+  assert.deepEqual(parseCommand('think in subvocal'), { action: 'set', mode: 'subvocal' });
+  assert.deepEqual(parseCommand('ultrasubvocal'), { action: 'set', mode: 'ultrasubvocal' });
   assert.equal(parseCommand('explain what normal mode means in vim'), null);
   assert.equal(parseCommand('how do I stop subvocal from compressing my commit messages in this repo?'), null);
   assert.equal(parseCommand(''), null);
@@ -72,16 +70,16 @@ test('natural language switches only when short and explicit', () => {
 // ---------------------------------------------------------------- config
 
 test('mode names and aliases', () => {
-  assert.equal(cfg.canonicalMode('STRICT'), 'subvocal');
+  assert.equal(cfg.canonicalMode('LITE'), 'subvocal');
   assert.equal(cfg.canonicalMode('ultra'), 'ultrasubvocal');
-  assert.equal(cfg.canonicalMode('light'), 'lite');
+  assert.equal(cfg.canonicalMode('strict'), null);
   assert.equal(cfg.canonicalMode('auto'), 'auto');
   assert.equal(cfg.canonicalMode('auto', cfg.VALID_MODES), null);
   assert.equal(cfg.canonicalMode('nonsense'), null);
 });
 
-test('auto is lite, manual is off', () => {
-  assert.equal(cfg.concreteMode('auto'), 'lite');
+test('auto is subvocal, manual is off', () => {
+  assert.equal(cfg.concreteMode('auto'), 'subvocal');
   assert.equal(cfg.concreteMode('manual'), 'off');
   assert.equal(cfg.concreteMode('ultrasubvocal'), 'ultrasubvocal');
 });
@@ -94,10 +92,10 @@ test('default mode: env, then repo config walking up, then user config', () => {
   try {
     delete process.env.SUBVOCAL_DEFAULT_MODE;
     process.env.XDG_CONFIG_HOME = tmp();
-    assert.equal(cfg.getDefaultMode(deep), 'auto', 'lite everywhere by default');
+    assert.equal(cfg.getDefaultMode(deep), 'auto', 'subvocal everywhere by default');
     fs.mkdirSync(path.join(process.env.XDG_CONFIG_HOME, 'subvocal'));
     fs.writeFileSync(path.join(process.env.XDG_CONFIG_HOME, 'subvocal', 'config.json'), '{"defaultMode":"lite"}');
-    assert.equal(cfg.getDefaultMode(deep), 'lite');
+    assert.equal(cfg.getDefaultMode(deep), 'subvocal');
     fs.writeFileSync(path.join(root, '.subvocal.json'), '// comment\n{"defaultMode": "ultra",}\n');
     assert.equal(cfg.getDefaultMode(deep), 'ultrasubvocal');
     process.env.SUBVOCAL_DEFAULT_MODE = 'off';
@@ -129,7 +127,7 @@ test('session state round trip, ids validated, symlinks replaced', () => {
   assert.equal(cfg.readSessionMode(dir, 'abc'), 'ultrasubvocal');
   assert.equal(cfg.writeSessionMode(dir, 'abc', 'bogus'), false);
   assert.equal(cfg.validateSessionId('../etc/passwd'), null);
-  cfg.writeSessionMode(dir, '../evil', 'lite');
+  cfg.writeSessionMode(dir, '../evil', 'subvocal');
   assert.ok(fs.existsSync(path.join(dir, '.subvocal', 'sessions', '_machine')));
   if (process.platform !== 'win32') {
     const target = path.join(tmp(), 'target');
@@ -153,16 +151,11 @@ test('old session files are collected', () => {
 });
 
 test('rulesets load from the skill files', () => {
-  const strict = cfg.buildRuleset('subvocal', HOOKS);
-  assert.match(strict, /^SUBVOCAL MODE ACTIVE: mode subvocal/);
-  assert.match(strict, /LEXICON:BEGIN/);
-  assert.doesNotMatch(strict, /^name: subvocal$/m, 'frontmatter stripped');
+  const subvocal = cfg.buildRuleset('subvocal', HOOKS);
+  assert.match(subvocal, /^Keep your internal reasoning concise/, 'bare skill text, no banner');
+  assert.doesNotMatch(subvocal, /^name: subvocal$/m, 'frontmatter stripped');
   const ultra = cfg.buildRuleset('ultrasubvocal', HOOKS);
-  assert.ok(ultra.indexOf('# subvocal') < ultra.indexOf('# ultrasubvocal'), 'ultra ships subvocal first, ultra last');
-  const lite = cfg.buildRuleset('lite', HOOKS);
-  assert.match(lite, /^Keep your internal reasoning concise/, 'lite ships its bare skill text, no banner');
-  assert.equal(cfg.reminder('lite'), null);
-  assert.match(cfg.reminder('subvocal'), /Subvocal active/);
+  assert.match(ultra, /^Keep your internal reasoning very concise/);
   assert.equal(cfg.loadRuleset('off', HOOKS), null);
 });
 
@@ -172,39 +165,39 @@ test('fallback ruleset when skills are missing', () => {
   delete process.env.CLAUDE_PLUGIN_ROOT;
   try {
     assert.equal(cfg.loadRuleset('subvocal', lonely), null);
-    assert.match(cfg.buildRuleset('subvocal', lonely), /Think in subvocal/);
-    assert.match(cfg.buildRuleset('lite', lonely), /minimal draft/);
+    assert.match(cfg.buildRuleset('subvocal', lonely), /^Keep your internal reasoning concise/);
+    assert.match(cfg.buildRuleset('ultrasubvocal', lonely), /^Keep your internal reasoning very concise/);
   } finally {
     if (saved !== undefined) process.env.CLAUDE_PLUGIN_ROOT = saved;
   }
 });
 
 test('no concealment wording anywhere in what the hooks inject', () => {
-  for (const mode of ['lite', 'subvocal', 'ultrasubvocal']) {
-    const text = cfg.buildRuleset(mode, HOOKS) + (cfg.reminder(mode) || '');
+  for (const mode of ['subvocal', 'ultrasubvocal']) {
+    const text = cfg.buildRuleset(mode, HOOKS);
     assert.doesNotMatch(text, /never mention subvocal|leaves? no trace|hide (your|the) (reasoning|thinking)/i, mode);
   }
 });
 
 // ---------------------------------------------------------------- hooks end to end
 
-test('default is auto: a new session starts in lite', () => {
+test('default is auto: a new session starts in subvocal', () => {
   const home = tmp();
   const out = runHook('subvocal-activate.js', { session_id: 'd1', source: 'startup', model: 'claude-haiku-5-5' },
     { CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp() });
   assert.match(out, /^Keep your internal reasoning concise/);
-  assert.equal(cfg.readSessionMode(home, 'd1'), 'lite');
+  assert.equal(cfg.readSessionMode(home, 'd1'), 'subvocal');
 });
 
-test('SessionStart: auto is lite on every model, state persisted', () => {
+test('SessionStart: auto is subvocal on every model, state persisted', () => {
   const home = tmp();
   const env = { CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'auto' };
   const sonnet = runHook('subvocal-activate.js', { session_id: 's1', source: 'startup', model: 'claude-sonnet-5-5' }, env);
   assert.match(sonnet, /^Keep your internal reasoning concise/);
-  assert.equal(cfg.readSessionMode(home, 's1'), 'lite');
+  assert.equal(cfg.readSessionMode(home, 's1'), 'subvocal');
   const haiku = runHook('subvocal-activate.js', { session_id: 's2', source: 'startup', model: 'claude-haiku-5-5' }, env);
   assert.match(haiku, /^Keep your internal reasoning concise/);
-  assert.equal(cfg.readSessionMode(home, 's2'), 'lite');
+  assert.equal(cfg.readSessionMode(home, 's2'), 'subvocal');
   const unknown = runHook('subvocal-activate.js', { session_id: 's3', source: 'startup' }, env);
   assert.match(unknown, /^Keep your internal reasoning concise/);
 });
@@ -214,37 +207,25 @@ test('SessionStart: resume keeps the session mode, manual starts off', () => {
   const env = { CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'auto' };
   cfg.writeSessionMode(home, 'r1', 'ultrasubvocal');
   const out = runHook('subvocal-activate.js', { session_id: 'r1', source: 'resume', model: 'claude-sonnet-5-5' }, env);
-  assert.match(out, /mode ultrasubvocal/);
+  assert.match(out, /^Keep your internal reasoning very concise/);
   const off = runHook('subvocal-activate.js', { session_id: 'm1', source: 'startup' }, { ...env, SUBVOCAL_DEFAULT_MODE: 'manual' });
   assert.equal(off, '');
   assert.equal(cfg.readSessionMode(home, 'm1'), 'off');
 });
 
-test('UserPromptSubmit: switch, status, reminder', () => {
+test('UserPromptSubmit: switch, status, no output otherwise', () => {
   const home = tmp();
   const env = { CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'auto' };
   runHook('subvocal-activate.js', { session_id: 'u1', source: 'startup', model: 'claude-haiku-5-5' }, env);
   assert.equal(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: 'fix my bug' }, env), '');
-  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal strict' }, env)), /LEXICON:BEGIN/);
-  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: 'fix my bug' }, env)), /^Subvocal active \(subvocal\)/);
-  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal ultra' }, env)), /switched to ultrasubvocal/);
+  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal ultra' }, env)), /^Keep your internal reasoning very concise/);
   assert.equal(cfg.readSessionMode(home, 'u1'), 'ultrasubvocal');
+  assert.equal(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: 'fix my bug' }, env), '');
   assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal status' }, env)), /Subvocal mode: ultrasubvocal$/);
-  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal' }, env)), /^Keep your internal reasoning concise/, 'bare /subvocal -> lite');
-  assert.equal(cfg.readSessionMode(home, 'u1'), 'lite');
+  assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: '/subvocal' }, env)), /^Keep your internal reasoning concise/);
+  assert.equal(cfg.readSessionMode(home, 'u1'), 'subvocal');
   assert.match(ctx(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: 'stop subvocal' }, env)), /OFF/);
   assert.equal(runHook('subvocal-mode-tracker.js', { session_id: 'u1', prompt: 'hello' }, env), '');
-});
-
-test('UserPromptSubmit: lite gets no per-turn reminder, bare /subvocal resolves to lite', () => {
-  const home = tmp();
-  const env = { CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'auto' };
-  runHook('subvocal-activate.js', { session_id: 'l1', source: 'startup', model: 'claude-sonnet-5-5' }, env);
-  assert.equal(runHook('subvocal-mode-tracker.js', { session_id: 'l1', prompt: 'explain this' }, env), '');
-  runHook('subvocal-mode-tracker.js', { session_id: 'l1', prompt: '/subvocal off' }, env);
-  const on = ctx(runHook('subvocal-mode-tracker.js', { session_id: 'l1', prompt: '/subvocal' }, env));
-  assert.match(on, /^Keep your internal reasoning concise/);
-  assert.equal(cfg.readSessionMode(home, 'l1'), 'lite');
 });
 
 test('SubagentStart passes the active ruleset, nothing when off', () => {
@@ -253,7 +234,7 @@ test('SubagentStart passes the active ruleset, nothing when off', () => {
   cfg.writeSessionMode(home, 'p1', 'subvocal');
   const out = JSON.parse(runHook('subvocal-activate.js', { session_id: 'p1' }, env, ['--subagent']));
   assert.equal(out.hookSpecificOutput.hookEventName, 'SubagentStart');
-  assert.match(out.hookSpecificOutput.additionalContext, /mode subvocal/);
+  assert.match(out.hookSpecificOutput.additionalContext, /^Keep your internal reasoning concise/);
   cfg.writeSessionMode(home, 'p2', 'off');
   assert.equal(runHook('subvocal-activate.js', { session_id: 'p2' }, env, ['--subagent']), '');
 });
@@ -262,16 +243,18 @@ test('other hosts: cursor JSON, codex plain text, off prints nothing', () => {
   const env = { XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'auto' };
   const cursor = JSON.parse(runHook('subvocal-host-session-start.js', { workspace_roots: [tmp()] }, env, ['cursor']));
   assert.match(cursor.additional_context, /^Keep your internal reasoning concise/);
-  const codex = runHook('subvocal-host-session-start.js', { cwd: tmp() }, { ...env, SUBVOCAL_DEFAULT_MODE: 'strict' }, ['codex']);
-  assert.match(codex, /^SUBVOCAL MODE ACTIVE: mode subvocal/);
+  const codex = runHook('subvocal-host-session-start.js', { cwd: tmp() }, { ...env, SUBVOCAL_DEFAULT_MODE: 'ultra' }, ['codex']);
+  assert.match(codex, /^Keep your internal reasoning very concise/);
   assert.equal(runHook('subvocal-host-session-start.js', {}, { ...env, SUBVOCAL_DEFAULT_MODE: 'off' }, ['codex']), '');
   assert.equal(runHook('subvocal-host-session-start.js', {}, { ...env, SUBVOCAL_DEFAULT_MODE: 'off' }, ['copilot']), '{}');
 });
 
 test('statusline badge', () => {
   const home = tmp();
-  cfg.writeSessionMode(home, 'b1', 'lite');
-  assert.equal(runHook('subvocal-statusline.js', { session_id: 'b1' }, { CLAUDE_CONFIG_DIR: home }), '[SUBVOCAL:LITE]');
+  cfg.writeSessionMode(home, 'b1', 'subvocal');
+  assert.equal(runHook('subvocal-statusline.js', { session_id: 'b1' }, { CLAUDE_CONFIG_DIR: home }), '[SUBVOCAL]');
+  cfg.writeSessionMode(home, 'b1', 'ultrasubvocal');
+  assert.equal(runHook('subvocal-statusline.js', { session_id: 'b1' }, { CLAUDE_CONFIG_DIR: home }), '[SUBVOCAL:ULTRA]');
   cfg.writeSessionMode(home, 'b1', 'off');
   assert.equal(runHook('subvocal-statusline.js', { session_id: 'b1' }, { CLAUDE_CONFIG_DIR: home }), '');
 });
@@ -309,15 +292,15 @@ test('installer: idempotent, keeps foreign settings, uninstalls cleanly', () => 
   assert.equal(s.hooks.UserPromptSubmit.length, 1);
   assert.equal(s.hooks.SubagentStart.length, 1);
   assert.match(s.statusLine.command, /subvocal-statusline\.js/);
-  for (const k of ['subvocal', 'subvocal-lite', 'ultrasubvocal']) {
+  for (const k of ['subvocal', 'ultrasubvocal']) {
     assert.ok(fs.existsSync(path.join(home, 'skills', k, 'SKILL.md')), k);
   }
   // The installed hooks find their installed skills.
   const out = spawnSync(process.execPath, [path.join(home, 'subvocal', 'hooks', 'subvocal-activate.js')], {
     input: JSON.stringify({ session_id: 'i1', source: 'startup', model: 'claude-haiku-5-5' }),
-    encoding: 'utf8', env: { ...BASE_ENV, HOME: home, CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'strict' },
+    encoding: 'utf8', env: { ...BASE_ENV, HOME: home, CLAUDE_CONFIG_DIR: home, XDG_CONFIG_HOME: tmp(), SUBVOCAL_DEFAULT_MODE: 'ultrasubvocal' },
   }).stdout;
-  assert.match(out, /LEXICON:BEGIN/);
+  assert.match(out, /^Keep your internal reasoning very concise/);
 
   install(home, '--uninstall');
   const after = JSON.parse(fs.readFileSync(path.join(home, 'settings.json'), 'utf8'));

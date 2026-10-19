@@ -1,8 +1,6 @@
 # ultrasubvocal
 
-Subvocal, tightened: no note or plan lines, an alias at the first mention of any
-multi-token term, one-word keys, no articles, pronouns or auxiliary verbs, and
-short lines. Layered on top of `subvocal`: the hooks inject both, ultrasubvocal last.
+The aggressive mode: very concise reasoning, a minimum draft per step. One plain paragraph, injected as is. The reply is unaffected.
 
 ```
 /subvocal ultra      (or /ultrasubvocal)

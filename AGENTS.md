@@ -1,7 +1,8 @@
 Read `CLAUDE.md` before working on this repository. It holds the layout, the
 rules for changing the dialect, and the checks to run.
 
-The subvocal skill text lives in `skills/subvocal/SKILL.md` and
-`skills/ultrasubvocal/SKILL.md`. The block between the `LEXICON` markers is
-generated: change `lexicon/candidates.json`, re-measure, and rebuild instead
-of editing it by hand.
+The two modes live in `skills/subvocal/SKILL.md` and
+`skills/ultrasubvocal/SKILL.md`, one plain paragraph each. The research dialect
+and its generated lexicon live in `docs/DIALECT.md`: change
+`lexicon/candidates.json`, re-measure, and rebuild instead of editing the
+generated block by hand.

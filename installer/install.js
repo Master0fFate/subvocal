@@ -5,7 +5,7 @@
 //   node installer/install.js --statusline    also add the [SUBVOCAL] badge (only if no statusline is set)
 //   node installer/install.js --uninstall     remove everything this installer added
 //   node installer/install.js --dry-run       show what would change, change nothing
-//   node installer/install.js --init          only write the lite rule as a fenced block into the
+//   node installer/install.js --init          only write the subvocal rule as a fenced block into the
 //                                             current repo's AGENTS.md (and CLAUDE.md,
 //                                             .github/copilot-instructions.md where they exist),
 //                                             for hosts without hooks; --init --uninstall removes it
@@ -13,7 +13,7 @@
 // What it touches, all under $CLAUDE_CONFIG_DIR (default ~/.claude):
 //   subvocal/hooks/*.js            the hook scripts
 //   subvocal/skills/*/SKILL.md     the ruleset the hooks inject
-//   skills/subvocal, skills/subvocal-lite, skills/ultrasubvocal   so the slash commands work
+//   skills/subvocal, skills/ultrasubvocal   so the slash commands work
 //   settings.json               three hook entries (and statusLine if asked);
 //                               a timestamped backup is written first
 //
@@ -37,7 +37,7 @@ const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.cla
 const home = path.join(claudeDir, 'subvocal');
 const hooksDir = path.join(home, 'hooks');
 const settingsPath = path.join(claudeDir, 'settings.json');
-const SKILLS = ['subvocal', 'subvocal-lite', 'ultrasubvocal'];
+const SKILLS = ['subvocal', 'ultrasubvocal'];
 const HOOK_FILES = ['subvocal-config.js', 'subvocal-parse.js', 'subvocal-activate.js', 'subvocal-mode-tracker.js', 'subvocal-statusline.js'];
 const MARK = 'subvocal/hooks/subvocal-';
 
@@ -145,7 +145,7 @@ function uninstall() {
 }
 
 function ruleBlock() {
-  const body = stripFrontmatter(fs.readFileSync(path.join(REPO, 'skills', 'subvocal-lite', 'SKILL.md'), 'utf8')).trim();
+  const body = stripFrontmatter(fs.readFileSync(path.join(REPO, 'skills', 'subvocal', 'SKILL.md'), 'utf8')).trim();
   return BLOCK_BEGIN + '\n' + body + '\n' + BLOCK_END + '\n';
 }
 
@@ -183,7 +183,7 @@ function initRules() {
     log((existing ? 'update ' : 'create ') + file);
     if (!DRY) fs.writeFileSync(file, next);
   }
-  log(UNINSTALL ? 'subvocal rule block removed.' : 'subvocal rule block written. Hosts that read AGENTS.md now start in lite mode.');
+  log(UNINSTALL ? 'subvocal rule block removed.' : 'subvocal rule block written. Hosts that read AGENTS.md now start in subvocal mode.');
 }
 
 const major = Number(process.versions.node.split('.')[0]);

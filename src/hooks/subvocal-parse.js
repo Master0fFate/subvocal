@@ -3,8 +3,7 @@
 
 'use strict';
 
-// Returns {action: 'set', mode} | {action: 'status'} | null. mode may be
-// 'auto': the caller resolves it with concreteMode.
+// Returns {action: 'set', mode} | {action: 'status'} | null.
 //
 // Slash commands are matched at the start of the prompt only. Claude Code
 // namespaces plugin skills, so `/subvocal:subvocal` and `/subvocal:ultrasubvocal` count
@@ -16,15 +15,12 @@ function parseCommand(prompt) {
   const text = prompt.trim();
   if (!text) return null;
 
-  const slash = text.match(/^\/(?:subvocal:)?(subvocal-lite|subvocal|ultrasubvocal)(?![\w-])[ \t]*([A-Za-z-]*)/i);
+  const slash = text.match(/^\/(?:subvocal:)?(subvocal|ultrasubvocal)(?![\w-])[ \t]*([A-Za-z-]*)/i);
   if (slash) {
     const cmd = slash[1].toLowerCase();
     const arg = (slash[2] || '').toLowerCase();
     if (cmd === 'ultrasubvocal') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'ultrasubvocal' };
-    if (cmd === 'subvocal-lite') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'lite' };
-    if (!arg || arg === 'on' || arg === 'auto') return { action: 'set', mode: 'auto' };
-    if (arg === 'strict' || arg === 'full' || arg === 'subvocal') return { action: 'set', mode: 'subvocal' };
-    if (arg === 'lite' || arg === 'light') return { action: 'set', mode: 'lite' };
+    if (!arg || arg === 'on' || arg === 'auto' || arg === 'subvocal' || arg === 'lite' || arg === 'light') return { action: 'set', mode: 'subvocal' };
     if (arg === 'ultra' || arg === 'ultrasubvocal' || arg === 'max') return { action: 'set', mode: 'ultrasubvocal' };
     if (arg === 'off' || arg === 'stop' || arg === 'normal' || arg === 'none') return { action: 'set', mode: 'off' };
     if (arg === 'status') return { action: 'status' };
@@ -41,15 +37,9 @@ function parseCommand(prompt) {
   if (/^(please )?(ultra subvocal|ultrasubvocal)( mode)?( on)?( please)?$/.test(plain)) {
     return { action: 'set', mode: 'ultrasubvocal' };
   }
-  if (/^(please )?(start |enable |turn on |use )?(subvocal lite|light subvocal)( mode)?( on)?( please)?$/.test(plain)) {
-    return { action: 'set', mode: 'lite' };
-  }
-  if (/^(please )?(start |enable |turn on |use )?strict subvocal( mode)?( on)?( please)?$/.test(plain)) {
-    return { action: 'set', mode: 'subvocal' };
-  }
   if (/^(please )?(start |enable |turn on |use )?subvocal( mode)?( on)?( please)?$/.test(plain)
       || /^think in subvocal( please)?$/.test(plain)) {
-    return { action: 'set', mode: 'auto' };
+    return { action: 'set', mode: 'subvocal' };
   }
   return null;
 }

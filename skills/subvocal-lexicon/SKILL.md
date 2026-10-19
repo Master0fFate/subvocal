@@ -3,13 +3,13 @@ name: subvocal-lexicon
 description: >
   Rebuild subvocal's measured lexicon for a model: mine the phrases your traces
   repeat, measure candidate notation with the real tokenizer, and regenerate
-  the lexicon block in the subvocal skills. Use for /subvocal-lexicon, "re-measure
+  the measured lexicon in docs/DIALECT.md. Use for /subvocal-lexicon, "re-measure
   subvocal", "tune subvocal for my model", "update the subvocal lexicon".
 ---
 
 # subvocal-lexicon
 
-Subvocal's rule is tokens, not characters. This skill re-derives the dialect from measurements whenever the model, the tokenizer, or your workload changes. Run the steps yourself with the shell; ask before any step that spends the user's API credit or subscription.
+Subvocal's rule is tokens, not characters. This skill re-derives the research dialect from measurements whenever the model, the tokenizer, or your workload changes. Run the steps yourself with the shell; ask before any step that spends the user's API credit or subscription.
 
 All commands run from the root of a subvocal repository clone. If the current directory is not one, ask the user where their clone is.
 
@@ -49,13 +49,13 @@ python3 scripts/build_lexicon.py
 python3 scripts/build_lexicon.py --check
 ```
 
-This rewrites `lexicon/lexicon.json` and the block between the `LEXICON` markers in `skills/subvocal/SKILL.md` and `skills/ultrasubvocal/SKILL.md`. Never edit that block by hand.
+This rewrites `lexicon/lexicon.json` and the block between the `LEXICON` markers in `docs/DIALECT.md`. No mode injects that block. Never edit it by hand.
 
 ## 5. Verify
 
 ```bash
 npm test
-python3 evals/run.py --model <model> --runs 2 --out evals/snapshots/<name>.jsonl
+python3 evals/run.py --model <model> --runs 2 --arms baseline,control,dialect --arm-file dialect=<file with the dialect text> --out evals/snapshots/<name>.jsonl
 python3 evals/report.py evals/snapshots/<name>.jsonl
 ```
 

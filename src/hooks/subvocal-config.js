@@ -9,13 +9,11 @@
 //   2. Repo config: <dir>/.subvocal/config.json or <dir>/.subvocal.json, walking up
 //   3. User config: $XDG_CONFIG_HOME/subvocal/config.json, else
 //      ~/.config/subvocal/config.json (Windows: %APPDATA%\subvocal\config.json first)
-//   4. 'auto': lite on every model, the mode that measured a thinking-token
-//      saving at equal accuracy in docs/HONEST-NUMBERS.md.
+//   4. 'auto': subvocal on every model.
 // A config file looks like
-//   {"defaultMode": "auto" | "lite" | "subvocal" | "ultrasubvocal" | "off" | "manual"}.
-// 'auto' resolves to lite on every model: the strict modes saved nothing on
-// Haiku 5.5 and are declined by the Sonnet 5.5 and Opus 5.5 safeguards (see
-// docs/HONEST-NUMBERS.md). 'manual': start off.
+//   {"defaultMode": "auto" | "subvocal" | "ultrasubvocal" | "off" | "manual"}.
+// 'lite' is accepted as an alias of subvocal and 'ultra' of ultrasubvocal, so
+// old configs keep working. 'manual': start off.
 //
 // Mode state is per session: <claude dir>/.subvocal/sessions/<session_id>.
 // A session id that is missing or malformed falls back to one machine-wide
@@ -27,18 +25,16 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const VALID_MODES = ['off', 'lite', 'subvocal', 'ultrasubvocal'];
+const VALID_MODES = ['off', 'subvocal', 'ultrasubvocal'];
 const DEFAULT_MODES = [...VALID_MODES, 'manual', 'auto'];
 const ALIASES = {
-  on: 'auto', strict: 'subvocal', full: 'subvocal', light: 'lite', 'subvocal-lite': 'lite',
-  ultra: 'ultrasubvocal', max: 'ultrasubvocal', none: 'off',
+  on: 'auto', lite: 'subvocal', light: 'subvocal', ultra: 'ultrasubvocal', max: 'ultrasubvocal', none: 'off',
 };
-const RULESET_MODES = ['lite', 'subvocal', 'ultrasubvocal'];
-const MODE_SKILL = { lite: 'subvocal-lite', subvocal: 'subvocal', ultrasubvocal: 'ultrasubvocal' };
+const RULESET_MODES = ['subvocal', 'ultrasubvocal'];
 
 // Turns a configured or requested mode into a concrete one.
 function concreteMode(mode) {
-  if (mode === 'auto') return 'lite';
+  if (mode === 'auto') return 'subvocal';
   if (mode === 'manual') return 'off';
   return mode;
 }
@@ -216,74 +212,34 @@ function stripFrontmatter(text) {
 
 function loadRuleset(mode, hooksDir) {
   if (!RULESET_MODES.includes(mode)) return null;
-  for (const file of skillPathCandidates(MODE_SKILL[mode], hooksDir || __dirname)) {
+  for (const file of skillPathCandidates(mode, hooksDir || __dirname)) {
     try {
       const body = stripFrontmatter(fs.readFileSync(file, 'utf8'));
-      if (body) {
-        // ultrasubvocal builds on subvocal: ship both, ultra last so it wins.
-        if (mode === 'ultrasubvocal') {
-          const base = loadRuleset('subvocal', hooksDir);
-          return base ? base + '\n\n---\n\n' + body : body;
-        }
-        return body;
-      }
+      if (body) return body;
     } catch (e) { /* try next layout */ }
   }
   return null;
 }
 
-// Used only when no SKILL.md can be found (a partial install). Short, but it
-// carries every hard rule so subvocal still behaves.
+// Used only when no SKILL.md can be found (a partial install). The same text
+// the skills carry.
 function fallbackRuleset(mode) {
-  if (mode === 'lite') {
-    return [
-      'Keep each reasoning step to a minimal draft: one short line, a few words.',
-      'Prefer compact notation where it is shorter: → for "so", =, !=, <, >, true, false, if, else. → and => are 1 token; -> is 2; ∴ ≠ ≥ ✓ are 4.',
-      'Give a long term you repeat a one-letter name. Keep every step and check you would normally do.',
-      'Write the reply normally, in the user\'s language.',
-    ].join('\n');
-  }
-  const ultra = mode === 'ultrasubvocal'
-    ? '\nULTRA: no # notes, no do: plans, alias at first mention, one-word keys, no articles/pronouns/auxiliary verbs, lines under ~12 tokens.'
-    : '';
-  return [
-    'Think in subvocal. Reply in prose.',
-    'Thinking only: every line is one form: find: | key: value | A := thing | a → b | expr = value | code line | case ... | ? question | !: wrong → fix | check: expr true|false | do: a; b | # note | => result.',
-    'Measured 1-token forms: → => = != > < & not in none * / + - true false if else case ==. Banned (2-5 tokens): ∴ ∵ ≠ ≥ ≤ ≈ ∀ ∃ ∈ ∅ ✓ ✗ ¬ ∧ ∨ -> ~ e.g. i.e.',
-    'Newline is the only connective. No narration (let me, okay, hmm, the user wants, I think). Aliases: one capital letter; never letter+digit.',
-    'Same reasoning: every step and check kept. Payload exact, negations kept. Think in English.',
-    'Shorthand, not a cipher: every line legible, every consideration that shapes the answer stays in the trace.',
-    'Reply: normal prose for the reader, in the user\'s language, aliases expanded.',
-  ].join('\n') + ultra;
+  const tail = ' Your reply is unaffected: write it as you normally would.';
+  if (mode === 'ultrasubvocal') return 'Keep your internal reasoning very concise: a minimum draft per step, a few words each.' + tail;
+  return 'Keep your internal reasoning concise: a minimum draft per step, a few words each.' + tail;
 }
 
-function rulesetBanner(mode) {
-  return 'SUBVOCAL MODE ACTIVE: mode ' + mode + '. Subvocal is a shorthand for your reasoning. Your reply is written normally.';
-}
-
-// Lite ships as its bare skill text, nothing added: that exact text is what
-// was tested against the Sonnet 5.5 / Opus 5.5 safeguards and accepted, and
-// the banner + reminder variant was not. See docs/HONEST-NUMBERS.md.
+// Each mode ships as its bare skill text, nothing added: that exact text is
+// what was tested against the Sonnet 5.5 / Opus 5.5 safeguards and accepted.
+// See docs/HONEST-NUMBERS.md.
 function buildRuleset(mode, hooksDir) {
-  const body = loadRuleset(mode, hooksDir) || fallbackRuleset(mode);
-  return mode === 'lite' ? body : rulesetBanner(mode) + '\n\n' + body;
-}
-
-// Per-turn reinforcement. Short on purpose: it is paid on every prompt.
-// Lite has no per-turn reminder (see buildRuleset); returns null.
-function reminder(mode) {
-  if (mode === 'lite') return null;
-  const extra = mode === 'ultrasubvocal' ? ' Ultra: no notes/plans, alias at first mention, no glue words.' : '';
-  return 'Subvocal active (' + mode + '). Thinking: subvocal lines only, measured forms (→ => = != true false ? !: :=), '
-    + 'newline as connective, aliases, no narration, every step and check kept.' + extra
-    + ' Shorthand stays legible and complete. Reply: normal prose in the user\'s language, aliases expanded.';
+  return loadRuleset(mode, hooksDir) || fallbackRuleset(mode);
 }
 
 module.exports = {
   VALID_MODES,
   DEFAULT_MODES,
   RULESET_MODES,
-  MODE_SKILL,
   concreteMode,
   canonicalMode,
   stripJsonComments,
@@ -302,7 +258,5 @@ module.exports = {
   stripFrontmatter,
   loadRuleset,
   fallbackRuleset,
-  rulesetBanner,
   buildRuleset,
-  reminder,
 };

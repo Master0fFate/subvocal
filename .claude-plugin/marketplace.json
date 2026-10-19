@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "subvocal",
-  "description": "Fewer thinking tokens, same answers. One measured instruction keeps a model's internal reasoning concise; the reply is unchanged. The strict shorthand dialect stays opt-in.",
+  "description": "Fewer thinking tokens, same answers. One measured instruction keeps a model's internal reasoning concise; the reply is unchanged. `/subvocal ultra` asks for a minimum draft per thinking step.",
   "owner": {
     "name": "subvocal contributors"
   },

@@ -4,12 +4,12 @@
 // SessionStart:
 //   1. Resolve this session's mode. A resumed or compacted session keeps the
 //      mode it had; a new session starts from the configured default, where
-//      'auto' means lite.
+//      'auto' means subvocal.
 //   2. Persist it (the prompt hook and the statusline read it).
-//   3. Print the full ruleset (the active skill's SKILL.md) as session context.
+//   3. Print the mode's text (the active skill's SKILL.md body) as session context.
 //
 // SubagentStart (--subagent): hand every new subagent the parent session's
-// active ruleset, so delegated work thinks in subvocal too. Read-only.
+// active mode's text, so delegated work thinks in subvocal too. Read-only.
 //
 // Fail open: any error prints nothing and exits 0. A broken install must
 // never block a session. Never call process.exit() after writing stdout:

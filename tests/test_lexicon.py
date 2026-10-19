@@ -48,7 +48,7 @@ class Selection(unittest.TestCase):
     def setUpClass(cls):
         cls.lex = build_lexicon.build(CANDS, MEASURED)
 
-    def test_committed_lexicon_and_skills_are_current(self):
+    def test_committed_lexicon_and_dialect_are_current(self):
         r = subprocess.run([sys.executable, str(REPO / "scripts" / "build_lexicon.py"), "--check"],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
@@ -90,11 +90,10 @@ class Selection(unittest.TestCase):
             first = row.split("|")[1].strip().strip("`")
             self.assertNotIn(first, banned, row)
 
-    def test_skill_files_carry_the_block(self):
-        for skill in build_lexicon.SKILLS:
-            text = skill.read_text(encoding="utf-8")
-            self.assertEqual(text.count(build_lexicon.BEGIN), 1)
-            self.assertIn("| `→` |", text)
+    def test_dialect_doc_carries_the_block(self):
+        text = build_lexicon.DIALECT.read_text(encoding="utf-8")
+        self.assertEqual(text.count(build_lexicon.BEGIN), 1)
+        self.assertIn("| `→` |", text)
 
 
 class Mining(unittest.TestCase):
