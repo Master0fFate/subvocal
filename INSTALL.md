@@ -1,96 +1,120 @@
-# Installing steno
+# Installing subvocal
 
-Steno needs Node.js 18+ for its hooks. The skills themselves are plain text.
+The per-host walkthroughs live in [README.md](README.md#install). This file
+keeps the details that do not fit there.
 
-## Claude Code: plugin (recommended)
+Subvocal needs Node.js 18+ for its hooks. The instruction itself is plain text.
 
-From a clone of this repository:
+## Claude Code
+
+Plugin (recommended), one step on Claude Code 2.1.275 or newer:
 
 ```
-/plugin marketplace add /path/to/steno
-/plugin install steno@steno
+/plugin install subvocal --marketplace Master0fFate/subvocal
 ```
 
-For a private GitHub repository, use the `owner/repo` form instead of a path
-once your GitHub account can read it. Start a new session afterwards. The
-plugin registers three hooks:
+Older versions, or from a local clone (relative paths must start with `./`):
+
+```
+/plugin marketplace add Master0fFate/subvocal      # or ./subvocal
+/plugin install subvocal@subvocal
+```
+
+Standalone, without the marketplace:
+
+```bash
+npx subvocal                                    # no clone needed
+bash install.sh                                 # from a clone
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+`--dry-run` shows what would change, `--statusline` adds the `[SUBVOCAL]`
+badge when no statusline is set, `--uninstall` removes everything. The
+installer backs up `settings.json` before writing and is idempotent. It
+touches, under `$CLAUDE_CONFIG_DIR` (default `~/.claude`):
+
+| Path | Content |
+|---|---|
+| `subvocal/hooks/*.js` | the hook scripts |
+| `subvocal/skills/*/SKILL.md`, `skills/<name>/SKILL.md` | the instruction and the strict rulesets, so the slash commands work |
+| `settings.json` | three hook entries, plus `statusLine` if asked |
+
+The plugin and the installer register the same hooks:
 
 | Hook | Script | Job |
 |---|---|---|
-| SessionStart | `src/hooks/steno-activate.js` | resolve mode, inject ruleset |
-| SubagentStart | `steno-activate.js --subagent` | give subagents the same ruleset |
-| UserPromptSubmit | `src/hooks/steno-mode-tracker.js` | mode switches, `/steno status`, per-turn reminder |
+| SessionStart | `src/hooks/subvocal-activate.js` | resolve mode, inject the instruction |
+| SubagentStart | `subvocal-activate.js --subagent` | give subagents the same instruction |
+| UserPromptSubmit | `src/hooks/subvocal-mode-tracker.js` | mode switches, `/subvocal status`, per-turn reminder in strict modes |
 
-## Claude Code: standalone (no marketplace)
-
-```bash
-bash install.sh                 # hooks + skills into ~/.claude
-bash install.sh --statusline    # also the [STENO] badge, if no statusline is set
-bash install.sh --dry-run       # show what would change
-bash install.sh --uninstall     # remove everything it added
-```
-
-Windows: `powershell -ExecutionPolicy Bypass -File install.ps1` with the same
-flags. The installer backs up `settings.json` before writing and is idempotent.
-
-### Chaining the statusline badge
-
-If you already have a statusline command, append the badge to it:
+Chaining the statusline badge after an existing statusline command:
 
 ```bash
-your-statusline-command; node ~/.claude/steno/hooks/steno-statusline.js
+your-statusline-command; node ~/.claude/subvocal/hooks/subvocal-statusline.js
 ```
 
-## Codex
+## Rule-file block (no hooks)
 
-This repository ships `.codex/hooks.json` and `.codex/config.toml`
-(`hooks = true`). Inside the repo, Codex loads the ruleset at session start.
-To use steno in another project, copy `.codex/` there and point the hook
-command at your steno clone's `.codex/codex-sessionstart.js`.
+```bash
+npx subvocal --init               # in the repository you work in
+npx subvocal --init --uninstall   # remove it again
+```
 
-## Cursor
+Writes the instruction between `<!-- subvocal:begin -->` and
+`<!-- subvocal:end -->` markers into `AGENTS.md` (created if missing) and into
+`CLAUDE.md` and `.github/copilot-instructions.md` when those files already
+exist. Everything else in those files is left alone. This is the path for
+OpenCode, Copilot in VS Code, Windsurf, Cline, or any host that reads
+`AGENTS.md` and has no session hook.
 
-The `.cursor-plugin/` manifest exposes the skills and a session-start hook
-(`hooks/hooks-cursor.json`).
+## Other hosts with hooks
 
-## Gemini CLI
+All of these run one `SessionStart` hook, `src/hooks/subvocal-host-session-start.js`,
+which prints the instruction for the configured default mode. There is no
+prompt hook, so switch mid-session by asking the model ("subvocal off").
 
-`gemini-extension.json` loads `GEMINI.md`, which imports the skill files.
-`commands/steno.toml` and `commands/ultrasteno.toml` add the slash commands.
+| Host | Shipped config | Hook output |
+|---|---|---|
+| Codex CLI | `.codex/hooks.json`, `.codex/config.toml` | plain text |
+| Cursor | `.cursor-plugin/plugin.json`, `hooks/hooks-cursor.json` | `{"additional_context": ...}` |
+| Copilot CLI | `.github/hooks/subvocal.json` | `{"additionalContext": ...}` |
+| Gemini CLI | `gemini-extension.json`, `GEMINI.md`, `commands/*.toml` | context file, no hook |
+
+Codex only runs project hooks from a trusted `.codex/` layer; approve them with
+`/hooks` inside Codex. Cursor local plugins go in `~/.cursor/plugins/local/`.
+Copilot user-wide hooks go in `~/.copilot/hooks/`.
 
 ## Configuration
 
 Default mode, first match wins:
 
-1. `STENO_DEFAULT_MODE` environment variable
-2. `.steno.json` or `.steno/config.json` in the project (searched upward)
-3. `~/.config/steno/config.json` (`%APPDATA%\steno\config.json` on Windows)
-4. `manual`: off until you type `/steno`
+1. `SUBVOCAL_DEFAULT_MODE` environment variable
+2. `.subvocal.json` or `.subvocal/config.json` in the project (searched upward)
+3. `~/.config/subvocal/config.json` (`%APPDATA%\subvocal\config.json` on Windows)
+4. `auto`: lite on every model
 
-Steno is off by default because the evals found no thinking-token saving on
-Claude 5.5 models (see [docs/HONEST-NUMBERS.md](docs/HONEST-NUMBERS.md)).
-To start every session in steno:
+To start sessions off instead:
 
 ```json
-{ "defaultMode": "auto" }
+{ "defaultMode": "manual" }
 ```
 
 | Value | Meaning |
 |---|---|
-| `auto` | strict `steno` on Haiku, `lite` on other or unknown models |
-| `lite` | light mode everywhere |
-| `steno` / `strict` | strict mode everywhere (declined by Sonnet 5.5 / Opus 5.5) |
-| `ultrasteno` / `ultra` | strictest mode (same caveat) |
-| `manual` (default) | start off; `/steno` turns it on |
+| `auto` (default) | `lite` on every model |
+| `lite` | same, explicitly |
+| `subvocal` / `strict` | strict dialect everywhere (declined by Sonnet 5.5 / Opus 5.5) |
+| `ultrasubvocal` / `ultra` | tightest dialect (same caveat) |
+| `manual` | start off; `/subvocal` turns it on |
 | `off` | never on |
 
 ## Commands
 
 ```
-/steno            auto: strict on Haiku, lite elsewhere
-/steno lite       light mode
-/steno strict     strict mode
-/steno ultra      ultrasteno (also /ultrasteno)
-/steno status     show the mode, change nothing
-/steno off        off (also "stop steno", "normal mode")
+/subvocal            lite (the default)
+/subvocal lite       same, explicitly
+/subvocal strict     strict dialect
+/subvocal ultra      ultrasubvocal (also /ultrasubvocal)
+/subvocal status     show the mode, change nothing
+/subvocal off        off (also "stop subvocal", "normal mode")
 ```
