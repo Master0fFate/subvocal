@@ -73,7 +73,7 @@ Steno starts **off** (`manual`) and turns on with `/steno`; see the numbers belo
 
 **Model support.** With the strict ruleset in context, Sonnet 5.5 and Opus 5.5
 decline to answer at all (`stop_reason: refusal`, even for "What is 17×23?").
-Their safeguards flag a long, forceful specification of how to think. Haiku
+Their safeguards appear to flag a long, forceful specification of how to think. Haiku
 5.5 accepts it. Steno does not reword its rules to get past a safety
 classifier, so strict modes are Haiku-only for now and `auto` falls back to
 `lite`, which was tested and accepted on all three. Details in
