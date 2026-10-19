@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "command -v node >/dev/null 2>&1 || exit 0; node \"$(git rev-parse --show-toplevel)/src/hooks/subvocal-host-session-start.js\" copilot",
+        "powershell": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$(git rev-parse --show-toplevel)/src/hooks/subvocal-host-session-start.js\" copilot }",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

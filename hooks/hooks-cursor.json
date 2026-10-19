@@ -3,7 +3,7 @@
   "hooks": {
     "sessionStart": [
       {
-        "command": "node \"${CURSOR_PLUGIN_ROOT}/src/hooks/steno-host-session-start.js\" cursor",
+        "command": "node \"${CURSOR_PLUGIN_ROOT}/src/hooks/subvocal-host-session-start.js\" cursor",
         "timeout": 10
       }
     ]

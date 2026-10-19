@@ -23,5 +23,4 @@ leaks and refusals.
 
 - Rules that skip or shorten reasoning steps or checks.
 - Wording that asks a model to hide, disguise or omit what it is reasoning about.
-- Rewording aimed at getting past a model's safety safeguards.
 - Hand edits to the generated `LEXICON` block.

@@ -1,2 +1,2 @@
-description = "Ultrasteno: maximum thinking compression, reply in normal prose (/ultrasteno)"
-prompt = "Switch to ultrasteno mode. Follow the steno and ultrasteno skills' rules from your loaded context: they govern your thinking only, and ultrasteno wins where they differ. Your reply stays exactly as it would be with steno off. Confirm in one short line."
+description = "Ultrasubvocal: maximum thinking compression, reply in normal prose (/ultrasubvocal)"
+prompt = "Switch to ultrasubvocal mode. Follow the subvocal and ultrasubvocal skills' rules from your loaded context: they govern your thinking only, and ultrasubvocal wins where they differ. Your reply stays exactly as it would be with subvocal off. Confirm in one short line."

@@ -1,31 +1,31 @@
-// steno — prompt command parsing and hook stdin reading. Pure functions,
+// subvocal — prompt command parsing and hook stdin reading. Pure functions,
 // shared by the hooks and covered by tests/hooks.test.js.
 
 'use strict';
 
 // Returns {action: 'set', mode} | {action: 'status'} | null. mode may be
-// 'auto': the caller resolves it against the session's model.
+// 'auto': the caller resolves it with concreteMode.
 //
 // Slash commands are matched at the start of the prompt only. Claude Code
-// namespaces plugin skills, so `/steno:steno` and `/steno:ultrasteno` count
-// too. Natural-language switches ("stop steno", "normal mode") count only when
+// namespaces plugin skills, so `/subvocal:subvocal` and `/subvocal:ultrasubvocal` count
+// too. Natural-language switches ("stop subvocal", "normal mode") count only when
 // the message is short and is mostly the switch itself: "explain what normal
-// mode means in vim" must not turn steno off.
+// mode means in vim" must not turn subvocal off.
 function parseCommand(prompt) {
   if (typeof prompt !== 'string') return null;
   const text = prompt.trim();
   if (!text) return null;
 
-  const slash = text.match(/^\/(?:steno:)?(steno-lite|steno|ultrasteno)(?![\w-])[ \t]*([A-Za-z-]*)/i);
+  const slash = text.match(/^\/(?:subvocal:)?(subvocal-lite|subvocal|ultrasubvocal)(?![\w-])[ \t]*([A-Za-z-]*)/i);
   if (slash) {
     const cmd = slash[1].toLowerCase();
     const arg = (slash[2] || '').toLowerCase();
-    if (cmd === 'ultrasteno') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'ultrasteno' };
-    if (cmd === 'steno-lite') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'lite' };
+    if (cmd === 'ultrasubvocal') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'ultrasubvocal' };
+    if (cmd === 'subvocal-lite') return arg === 'off' ? { action: 'set', mode: 'off' } : { action: 'set', mode: 'lite' };
     if (!arg || arg === 'on' || arg === 'auto') return { action: 'set', mode: 'auto' };
-    if (arg === 'strict' || arg === 'full' || arg === 'steno') return { action: 'set', mode: 'steno' };
+    if (arg === 'strict' || arg === 'full' || arg === 'subvocal') return { action: 'set', mode: 'subvocal' };
     if (arg === 'lite' || arg === 'light') return { action: 'set', mode: 'lite' };
-    if (arg === 'ultra' || arg === 'ultrasteno' || arg === 'max') return { action: 'set', mode: 'ultrasteno' };
+    if (arg === 'ultra' || arg === 'ultrasubvocal' || arg === 'max') return { action: 'set', mode: 'ultrasubvocal' };
     if (arg === 'off' || arg === 'stop' || arg === 'normal' || arg === 'none') return { action: 'set', mode: 'off' };
     if (arg === 'status') return { action: 'status' };
     return null;
@@ -33,22 +33,22 @@ function parseCommand(prompt) {
 
   if (text.length > 60) return null;
   const plain = text.toLowerCase().replace(/[^a-z ]+/g, ' ').replace(/\s+/g, ' ').trim();
-  if (/^(please )?(stop|disable|end|exit|turn off) steno( mode)?( please)?$/.test(plain)
-      || /^steno (mode )?off$/.test(plain)
+  if (/^(please )?(stop|disable|end|exit|turn off) subvocal( mode)?( please)?$/.test(plain)
+      || /^subvocal (mode )?off$/.test(plain)
       || /^(back to |switch to |go back to )?normal (mode|thinking)( please)?$/.test(plain)) {
     return { action: 'set', mode: 'off' };
   }
-  if (/^(please )?(ultra steno|ultrasteno)( mode)?( on)?( please)?$/.test(plain)) {
-    return { action: 'set', mode: 'ultrasteno' };
+  if (/^(please )?(ultra subvocal|ultrasubvocal)( mode)?( on)?( please)?$/.test(plain)) {
+    return { action: 'set', mode: 'ultrasubvocal' };
   }
-  if (/^(please )?(start |enable |turn on |use )?(steno lite|light steno)( mode)?( on)?( please)?$/.test(plain)) {
+  if (/^(please )?(start |enable |turn on |use )?(subvocal lite|light subvocal)( mode)?( on)?( please)?$/.test(plain)) {
     return { action: 'set', mode: 'lite' };
   }
-  if (/^(please )?(start |enable |turn on |use )?strict steno( mode)?( on)?( please)?$/.test(plain)) {
-    return { action: 'set', mode: 'steno' };
+  if (/^(please )?(start |enable |turn on |use )?strict subvocal( mode)?( on)?( please)?$/.test(plain)) {
+    return { action: 'set', mode: 'subvocal' };
   }
-  if (/^(please )?(start |enable |turn on |use )?steno( mode)?( on)?( please)?$/.test(plain)
-      || /^think in steno( please)?$/.test(plain)) {
+  if (/^(please )?(start |enable |turn on |use )?subvocal( mode)?( on)?( please)?$/.test(plain)
+      || /^think in subvocal( please)?$/.test(plain)) {
     return { action: 'set', mode: 'auto' };
   }
   return null;
@@ -70,9 +70,9 @@ function readPayload(timeoutMs = 2000) {
       try { process.stdin.unref(); } catch (e) { /* ignore */ }
       let data = {};
       try { data = JSON.parse(input) || {}; } catch (e) { /* empty or partial */ }
-      // Troubleshooting aid: STENO_DEBUG_PAYLOAD=<file> appends every payload.
-      if (process.env.STENO_DEBUG_PAYLOAD) {
-        try { require('fs').appendFileSync(process.env.STENO_DEBUG_PAYLOAD, JSON.stringify(data) + '\n'); } catch (e) { /* ignore */ }
+      // Troubleshooting aid: SUBVOCAL_DEBUG_PAYLOAD=<file> appends every payload.
+      if (process.env.SUBVOCAL_DEBUG_PAYLOAD) {
+        try { require('fs').appendFileSync(process.env.SUBVOCAL_DEBUG_PAYLOAD, JSON.stringify(data) + '\n'); } catch (e) { /* ignore */ }
       }
       resolve(typeof data === 'object' && data !== null ? data : {});
     };

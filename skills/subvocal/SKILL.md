@@ -1,30 +1,30 @@
 ---
-name: steno
+name: subvocal
 description: >
-  Steno thinking: write internal reasoning in a measured code/math shorthand
+  Subvocal thinking: write internal reasoning in a measured code/math shorthand
   (one fact per line, aliases, 1-token operators) while the visible reply stays
-  normal prose. Same reasoning, fewer thinking tokens. Use for /steno,
-  "steno mode", "compress thinking", "think in steno". Stays on until
-  "stop steno" or "normal mode".
+  normal prose. Same reasoning, fewer thinking tokens. Use for /subvocal,
+  "subvocal mode", "compress thinking", "think in subvocal". Stays on until
+  "stop subvocal" or "normal mode".
 ---
 
-# steno
+# subvocal
 
-Think in steno. Reply in prose.
+Think in subvocal. Reply in prose.
 
-Steno is a way of writing thoughts down, not a way of thinking less. Same steps, same checks, same depth. Fewer tokens per step. It is shorthand, not a cipher: anyone who reads code and math can follow every line.
+Subvocal is a way of writing thoughts down, not a way of thinking less. Same steps, same checks, same depth. Fewer tokens per step. It is shorthand, not a cipher: anyone who reads code and math can follow every line.
 
 ## Scope
 
 - **Applies to:** thinking and reasoning blocks. Nothing else.
 - **Never applies to:** the reply, code, files, commit messages, tool arguments, prompts to subagents, or anything a person or program reads.
-- The reply is exactly what you would write with steno off.
+- The reply is exactly what you would write with subvocal off.
 
 ## Persistence
 
-Every turn, whole session, until user says "stop steno", "normal mode", or `/steno off`. Unsure if still on? It is. Confirm the switch-off in one line.
+Every turn, whole session, until user says "stop subvocal", "normal mode", or `/subvocal off`. Unsure if still on? It is. Confirm the switch-off in one line.
 
-`/steno strict` selects this skill. `/steno lite` selects `steno-lite`, `/steno ultra` selects `ultrasteno`. Bare `/steno` picks per model: strict on Haiku, lite elsewhere. `/steno status` reports the mode and changes nothing. Relay the hook's `Steno mode: <mode>` value when present. No hook value: report the mode you followed, plus `(not tracked by this host)`. Loading this skill to answer status is not activation.
+`/subvocal strict` selects this skill. `/subvocal lite` selects `subvocal-lite`, `/subvocal ultra` selects `ultrasubvocal`. Bare `/subvocal` selects `subvocal-lite`, the mode that measured a saving. `/subvocal status` reports the mode and changes nothing. Relay the hook's `Subvocal mode: <mode>` value when present. No hook value: report the mode you followed, plus `(not tracked by this host)`. Loading this skill to answer status is not activation.
 
 ## Why
 
@@ -152,7 +152,7 @@ Good: `!: exp in s, not ms → compare exp*1000 < now`
 
 ### 7. Same reasoning, fewer tokens
 
-Steno changes the writing, never the thinking. Every step, case, check and edge case you would cover without steno, cover with steno. Never skip a verification to save tokens. Never shorten a hard problem: if it needs 60 lines, it gets 60 lines.
+Subvocal changes the writing, never the thinking. Every step, case, check and edge case you would cover without subvocal, cover with subvocal. Never skip a verification to save tokens. Never shorten a hard problem: if it needs 60 lines, it gets 60 lines.
 
 ### 8. Payload exact
 
@@ -164,7 +164,7 @@ Think in English whatever the user writes: measured cheaper per token than other
 
 ### 10. Reply in normal prose
 
-Steno is for scratch work. The reply is for the reader: same length, depth, tone, structure, formatting and language as with steno off. Expand every alias to its full term. No `=>`, `!:`, `:=`, `?`-lines or fragments carried over from thinking. No "steno mode on" banners. Asked about steno, answer plainly.
+Subvocal is for scratch work. The reply is for the reader: same length, depth, tone, structure, formatting and language as with subvocal off. Expand every alias to its full term. No `=>`, `!:`, `:=`, `?`-lines or fragments carried over from thinking. No "subvocal mode on" banners. Asked about subvocal, answer plainly.
 
 ### 11. Readable, complete, honest
 
@@ -172,7 +172,7 @@ Shorthand must stay legible. Every line says exactly what it means to a reader w
 
 ## When to break the rules
 
-Inside thinking, write plain sentences for the part that needs them, then resume steno:
+Inside thinking, write plain sentences for the part that needs them, then resume subvocal:
 
 1. Safety, ethics, or a person's wellbeing: reason in full sentences.
 2. Exact wording decides the answer (a contract clause, an ambiguous instruction, a quote): quote it verbatim.
@@ -184,7 +184,7 @@ Run it silently. Never write the checklist out.
 
 1. Thinking: every line one form? No banned word or symbol? No letter+digit alias?
 2. Reply: any alias, `=>`, `!:`, `:=`, `?`-line or fragment carried over from thinking? Rewrite it as prose.
-3. Reply in the user's language, same length and depth as without steno?
+3. Reply in the user's language, same length and depth as without subvocal?
 4. Every number, identifier, and negation exact?
 
 ## Example
@@ -194,7 +194,7 @@ Prompt: "Jobs in our retry queue sometimes get dropped after one failure. Code i
 Plain thinking, 120+ tokens:
 > Okay, so the user says jobs get dropped after one failure. Let me look at src/pay/retryQueue.ts. MAX_RETRIES is 3. The attempt counter goes up on each failure, but I notice it's never reset when a job succeeds. So if a job fails three times, then succeeds, then fails again, attempt becomes 4, which is greater than 3, so it gets dropped after just one new failure. That matches the report. Wait, I should check whether anything else resets the counter...
 
-Steno thinking, same steps:
+Subvocal thinking, same steps:
 ```
 find: why job dropped after 1 fail
 Q := src/pay/retryQueue.ts
@@ -208,4 +208,4 @@ Q.retry() reads attempt only
 => reset attempt in Q.onSuccess()
 ```
 
-Reply, unchanged: a normal explanation in full sentences, naming `src/pay/retryQueue.ts` and the fix, exactly as it would read with steno off.
+Reply, unchanged: a normal explanation in full sentences, naming `src/pay/retryQueue.ts` and the fix, exactly as it would read with subvocal off.

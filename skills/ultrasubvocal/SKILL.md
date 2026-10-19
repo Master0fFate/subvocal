@@ -1,33 +1,33 @@
 ---
-name: ultrasteno
+name: ultrasubvocal
 description: >
-  Maximum steno thinking: reasoning as pure notation lines, aliases at first
+  Maximum subvocal thinking: reasoning as pure notation lines, aliases at first
   mention, no prose exceptions except safety. Visible reply stays normal
-  prose. Use for /ultrasteno, /steno ultra, "ultra steno", "max compress
-  thinking". Stays on until "stop steno" or "normal mode".
+  prose. Use for /ultrasubvocal, /subvocal ultra, "ultra subvocal", "max compress
+  thinking". Stays on until "stop subvocal" or "normal mode".
 ---
 
-# ultrasteno
+# ultrasubvocal
 
 Think in pure notation. Reply in prose.
 
-Everything in the `steno` skill applies. This file only tightens it. Where the two differ, this file wins. Ultrasteno trades a little legibility of the trace for fewer tokens; measure it on your own tasks before you trust it on hard ones.
+Everything in the `subvocal` skill applies. This file only tightens it. Where the two differ, this file wins. Ultrasubvocal trades a little legibility of the trace for fewer tokens; measure it on your own tasks before you trust it on hard ones.
 
 ## Scope
 
 - **Applies to:** thinking and reasoning blocks. Nothing else.
 - **Never applies to:** the reply, code, files, commit messages, tool arguments, prompts to subagents, or anything a person or program reads.
-- The reply is exactly what you would write with steno off.
+- The reply is exactly what you would write with subvocal off.
 
 ## Persistence
 
-Every turn, whole session, until user says "stop steno", "normal mode", or `/steno off`. `/steno strict` switches back to standard steno, `/steno lite` to the light mode. `/steno status` reports the mode and changes nothing; with no hook value, add `(not tracked by this host)`.
+Every turn, whole session, until user says "stop subvocal", "normal mode", or `/subvocal off`. `/subvocal strict` switches back to standard subvocal, `/subvocal lite` to the light mode. `/subvocal status` reports the mode and changes nothing; with no hook value, add `(not tracked by this host)`.
 
 ## Rules
 
 ### 1. Forms, tightened
 
-Same line forms as `steno`, with three removed and one narrowed:
+Same line forms as `subvocal`, with three removed and one narrowed:
 
 - No `# note` lines. If it matters, it is a fact: `key: value`.
 - No `do:` plan lines. Start with the first step.
@@ -105,7 +105,7 @@ Keys are one word: `exp: s`, not `expiry unit: seconds`. No articles, no pronoun
 
 A line holds one fact, one step, or one check. Longer than about 12 tokens? Split it.
 
-### 6. Everything else from steno
+### 6. Everything else from subvocal
 
 Newline as the only connective. No narration. `!:` for corrections. Same reasoning, every step and every check kept. Payload exact, negations kept. English inside, user's language outside. Reply in normal prose, aliases expanded. Readable, complete, honest: shorthand, never a cipher, and every consideration that shapes the answer stays in the trace.
 
@@ -119,7 +119,7 @@ Run it silently. Never write the checklist out.
 
 ## Example
 
-Same retry-queue prompt as the `steno` skill:
+Same retry-queue prompt as the `subvocal` skill:
 ```
 find: drop after 1 fail
 Q := src/pay/retryQueue.ts

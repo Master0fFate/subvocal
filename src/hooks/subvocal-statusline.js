@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-// steno — Claude Code statusline badge.
+// subvocal — Claude Code statusline badge.
 //
-// Prints [STENO], [STENO:LITE] or [STENO:ULTRA] while steno is active for this session,
+// Prints [SUBVOCAL], [SUBVOCAL:LITE] or [SUBVOCAL:ULTRA] while subvocal is active for this session,
 // nothing otherwise. To chain it after an existing statusline, run that
 // command first and this one second; see INSTALL.md.
 
 'use strict';
 
-const cfg = require('./steno-config');
-const { readPayload } = require('./steno-parse');
+const cfg = require('./subvocal-config');
+const { readPayload } = require('./subvocal-parse');
 
 readPayload(1000).then((payload) => {
   const mode = cfg.resolveActiveMode(undefined, cfg.validateSessionId(payload.session_id));
-  if (mode === 'steno') process.stdout.write('[STENO]');
-  else if (mode === 'ultrasteno') process.stdout.write('[STENO:ULTRA]');
-  else if (mode === 'lite') process.stdout.write('[STENO:LITE]');
+  if (mode === 'subvocal') process.stdout.write('[SUBVOCAL]');
+  else if (mode === 'ultrasubvocal') process.stdout.write('[SUBVOCAL:ULTRA]');
+  else if (mode === 'lite') process.stdout.write('[SUBVOCAL:LITE]');
 }).catch(() => { /* print nothing */ });

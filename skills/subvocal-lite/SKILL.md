@@ -1,18 +1,10 @@
 ---
-name: steno-lite
+name: subvocal-lite
 description: >
-  Light steno thinking: keep each reasoning step to a short draft in compact
-  notation; the reply stays normal prose. What auto mode picks on models
-  whose safeguards decline the strict ruleset. Use for /steno lite,
-  "steno lite", "light steno".
+  Light subvocal: one measured instruction that keeps internal reasoning
+  concise while the reply stays exactly as it would be otherwise. What
+  /subvocal and auto mode select on every model. Use for /subvocal lite,
+  "subvocal lite", "light subvocal".
 ---
 
-# steno lite
-
-Keep each reasoning step to a minimal draft: one short line, a few words.
-
-- Prefer compact notation where it is shorter: `→` for "so", `=`, `!=`, `<`, `>`, `true`, `false`, `if`, `else`.
-- Measured cheapest: `→` and `=>` are 1 token; `->` is 2; `∴`, `≠`, `≥`, `✓` are 4. Use the cheap ones.
-- Give a long term you repeat a one-letter name.
-- Keep every step and check you would normally do.
-- Write the reply normally, in the user's language.
+Keep your internal reasoning concise. Your reply is unaffected: write it as you normally would.

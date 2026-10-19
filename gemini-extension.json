@@ -1,6 +1,6 @@
 {
-  "name": "steno",
-  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "name": "subvocal",
+  "description": "Fewer thinking tokens, same answers. One measured instruction keeps a model's internal reasoning concise; the reply is unchanged. The strict shorthand dialect stays opt-in.",
   "version": "0.1.0",
   "contextFileName": "GEMINI.md"
 }

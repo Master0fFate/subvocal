@@ -1,9 +1,39 @@
 {
-  "name": "steno",
+  "name": "subvocal",
   "version": "0.1.0",
-  "description": "Steno thinking: compresses a model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "description": "Fewer thinking tokens, same answers. One measured instruction keeps a model's internal reasoning concise; the reply is unchanged. The strict shorthand dialect stays opt-in.",
   "license": "MIT",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Master0fFate/subvocal.git"
+  },
+  "homepage": "https://github.com/Master0fFate/subvocal#readme",
+  "bugs": {
+    "url": "https://github.com/Master0fFate/subvocal/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "cursor",
+    "gemini-cli",
+    "copilot",
+    "plugin",
+    "hooks",
+    "thinking-tokens",
+    "reasoning",
+    "shorthand"
+  ],
+  "bin": {
+    "subvocal": "installer/install.js"
+  },
+  "files": [
+    "installer/",
+    "src/hooks/",
+    "skills/",
+    "LICENSE",
+    "README.md",
+    "INSTALL.md"
+  ],
   "engines": {
     "node": ">=18"
   },

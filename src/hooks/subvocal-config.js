@@ -1,24 +1,23 @@
-// steno — shared config, mode state and ruleset loading for every hook.
+// subvocal — shared config, mode state and ruleset loading for every hook.
 //
 // Zero dependencies. Every function fails open: a broken config or an
 // unreadable state file degrades to the default mode, never to an error that
 // blocks a session.
 //
 // Default mode resolution (first hit wins):
-//   1. STENO_DEFAULT_MODE environment variable
-//   2. Repo config: <dir>/.steno/config.json or <dir>/.steno.json, walking up
-//   3. User config: $XDG_CONFIG_HOME/steno/config.json, else
-//      ~/.config/steno/config.json (Windows: %APPDATA%\steno\config.json first)
-//   4. 'manual': off until /steno. The evals in docs/HONEST-NUMBERS.md found
-//      no thinking-token saving on Claude 5.5 models (strict modes cost more),
-//      so steno does not switch itself on by default.
+//   1. SUBVOCAL_DEFAULT_MODE environment variable
+//   2. Repo config: <dir>/.subvocal/config.json or <dir>/.subvocal.json, walking up
+//   3. User config: $XDG_CONFIG_HOME/subvocal/config.json, else
+//      ~/.config/subvocal/config.json (Windows: %APPDATA%\subvocal\config.json first)
+//   4. 'auto': lite on every model, the mode that measured a thinking-token
+//      saving at equal accuracy in docs/HONEST-NUMBERS.md.
 // A config file looks like
-//   {"defaultMode": "auto" | "lite" | "steno" | "ultrasteno" | "off" | "manual"}.
-// 'auto' picks per model: strict steno on Haiku, lite elsewhere, because the
-// Sonnet 5.5 and Opus 5.5 safeguards decline the strict ruleset (see
-// docs/HONEST-NUMBERS.md). Unknown model -> lite. 'manual': start off.
+//   {"defaultMode": "auto" | "lite" | "subvocal" | "ultrasubvocal" | "off" | "manual"}.
+// 'auto' resolves to lite on every model: the strict modes saved nothing on
+// Haiku 5.5 and are declined by the Sonnet 5.5 and Opus 5.5 safeguards (see
+// docs/HONEST-NUMBERS.md). 'manual': start off.
 //
-// Mode state is per session: <claude dir>/.steno/sessions/<session_id>.
+// Mode state is per session: <claude dir>/.subvocal/sessions/<session_id>.
 // A session id that is missing or malformed falls back to one machine-wide
 // file, so a host that sends no id still works.
 
@@ -28,72 +27,22 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const VALID_MODES = ['off', 'lite', 'steno', 'ultrasteno'];
+const VALID_MODES = ['off', 'lite', 'subvocal', 'ultrasubvocal'];
 const DEFAULT_MODES = [...VALID_MODES, 'manual', 'auto'];
 const ALIASES = {
-  on: 'auto', strict: 'steno', full: 'steno', light: 'lite', 'steno-lite': 'lite',
-  ultra: 'ultrasteno', max: 'ultrasteno', none: 'off',
+  on: 'auto', strict: 'subvocal', full: 'subvocal', light: 'lite', 'subvocal-lite': 'lite',
+  ultra: 'ultrasubvocal', max: 'ultrasubvocal', none: 'off',
 };
-const RULESET_MODES = ['lite', 'steno', 'ultrasteno'];
-const MODE_SKILL = { lite: 'steno-lite', steno: 'steno', ultrasteno: 'ultrasteno' };
-
-// Strict steno only where it is known to be accepted. Everything else,
-// including an unknown model, gets lite.
-function resolveAuto(model) {
-  const id = typeof model === 'string' ? model : (model && (model.id || model.name)) || '';
-  return /haiku/i.test(String(id)) ? 'steno' : 'lite';
-}
+const RULESET_MODES = ['lite', 'subvocal', 'ultrasubvocal'];
+const MODE_SKILL = { lite: 'subvocal-lite', subvocal: 'subvocal', ultrasubvocal: 'ultrasubvocal' };
 
 // Turns a configured or requested mode into a concrete one.
-function concreteMode(mode, model) {
-  if (mode === 'auto') return resolveAuto(model);
+function concreteMode(mode) {
+  if (mode === 'auto') return 'lite';
   if (mode === 'manual') return 'off';
   return mode;
 }
 
-// Best-effort model id for a hook run: payload first, then env. Claude Code's
-// SessionStart payload carries no model, so callers also try settings files
-// and, once the first reply exists, the transcript.
-function modelFrom(payload) {
-  const m = payload && payload.model;
-  if (typeof m === 'string' && m) return m;
-  if (m && typeof m === 'object' && (m.id || m.name)) return m.id || m.name;
-  return process.env.ANTHROPIC_MODEL || process.env.CLAUDE_MODEL || null;
-}
-
-// The "model" setting from project-local, project, then user settings.json.
-function modelFromSettings(cwd) {
-  const files = [];
-  if (cwd) {
-    files.push(path.join(cwd, '.claude', 'settings.local.json'), path.join(cwd, '.claude', 'settings.json'));
-  }
-  files.push(path.join(claudeDir(), 'settings.json'));
-  for (const f of files) {
-    try {
-      const m = parseConfigFile(f).model;
-      if (typeof m === 'string' && m) return m;
-    } catch (e) { /* absent or invalid */ }
-  }
-  return null;
-}
-
-// The model that wrote the latest assistant message in a transcript (JSONL).
-// Reads only the tail of the file.
-function modelFromTranscript(file) {
-  if (typeof file !== 'string' || !file) return null;
-  try {
-    const st = fs.statSync(file);
-    const len = Math.min(st.size, 256 * 1024);
-    const buf = Buffer.alloc(len);
-    const fd = fs.openSync(file, 'r');
-    try { fs.readSync(fd, buf, 0, len, st.size - len); } finally { fs.closeSync(fd); }
-    const hits = buf.toString('utf8').match(/"model"\s*:\s*"(claude-[^"]{1,100})"/g);
-    if (!hits) return null;
-    return hits[hits.length - 1].replace(/^.*"(claude-[^"]+)"$/, '$1');
-  } catch (e) {
-    return null;
-  }
-}
 const SESSION_TTL_MS = 14 * 24 * 3600 * 1000;
 
 function canonicalMode(raw, allowed = DEFAULT_MODES) {
@@ -145,21 +94,21 @@ function parseConfigFile(file) {
 
 function userConfigPaths() {
   const home = os.homedir();
-  if (process.env.XDG_CONFIG_HOME) return [path.join(process.env.XDG_CONFIG_HOME, 'steno', 'config.json')];
-  const unix = path.join(home, '.config', 'steno', 'config.json');
+  if (process.env.XDG_CONFIG_HOME) return [path.join(process.env.XDG_CONFIG_HOME, 'subvocal', 'config.json')];
+  const unix = path.join(home, '.config', 'subvocal', 'config.json');
   if (process.platform === 'win32') {
-    return [path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'steno', 'config.json'), unix];
+    return [path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'subvocal', 'config.json'), unix];
   }
   return [unix];
 }
 
 function getDefaultMode(startDir) {
-  const env = canonicalMode(process.env.STENO_DEFAULT_MODE);
+  const env = canonicalMode(process.env.SUBVOCAL_DEFAULT_MODE);
   if (env) return env;
   try {
     let dir = path.resolve(startDir || process.cwd());
     for (let i = 0; i < 64; i++) {
-      for (const rel of [path.join('.steno', 'config.json'), '.steno.json']) {
+      for (const rel of [path.join('.subvocal', 'config.json'), '.subvocal.json']) {
         const m = readConfigMode(path.join(dir, rel));
         if (m) return m;
       }
@@ -172,7 +121,7 @@ function getDefaultMode(startDir) {
     const m = readConfigMode(file);
     if (m) return m;
   }
-  return 'manual';
+  return 'auto';
 }
 
 // ---------------------------------------------------------------------------
@@ -184,7 +133,7 @@ function claudeDir() {
 }
 
 function stateDir(dir) {
-  return path.join(dir || claudeDir(), '.steno', 'sessions');
+  return path.join(dir || claudeDir(), '.subvocal', 'sessions');
 }
 
 function validateSessionId(sid) {
@@ -224,52 +173,6 @@ function writeSessionMode(dir, sid, mode) {
   }
 }
 
-// The model seen at session start, so a later bare `/steno` can resolve 'auto'.
-function writeSessionModel(dir, sid, model) {
-  if (typeof model !== 'string' || !model) return false;
-  try {
-    const file = statePath(dir, sid) + '.model';
-    try { if (fs.lstatSync(file).isSymbolicLink()) fs.unlinkSync(file); } catch (e) { /* absent */ }
-    fs.mkdirSync(stateDir(dir), { recursive: true, mode: 0o700 });
-    fs.writeFileSync(file, model.slice(0, 128), { mode: 0o600 });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function readSessionModel(dir, sid) {
-  try {
-    const file = statePath(dir, sid) + '.model';
-    if (!fs.lstatSync(file).isFile()) return null;
-    return fs.readFileSync(file, 'utf8').slice(0, 128).trim() || null;
-  } catch (e) {
-    return null;
-  }
-}
-
-// Marks a session whose mode came from 'auto' before its model was known, so
-// the prompt hook can settle it once the transcript names the model.
-function setAutoPending(dir, sid, pending) {
-  const file = statePath(dir, sid) + '.auto';
-  try {
-    if (pending) {
-      fs.mkdirSync(stateDir(dir), { recursive: true, mode: 0o700 });
-      try { if (fs.lstatSync(file).isSymbolicLink()) fs.unlinkSync(file); } catch (e) { /* absent */ }
-      fs.writeFileSync(file, '1', { mode: 0o600 });
-    } else {
-      fs.unlinkSync(file);
-    }
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function isAutoPending(dir, sid) {
-  try { return fs.lstatSync(statePath(dir, sid) + '.auto').isFile(); } catch (e) { return false; }
-}
-
 // Active mode for a session: stored mode wins, otherwise null (caller decides).
 function resolveActiveMode(dir, sid) {
   const m = readSessionMode(dir, sid);
@@ -302,7 +205,7 @@ function skillPathCandidates(mode, hooksDir) {
   const list = [];
   if (process.env.CLAUDE_PLUGIN_ROOT) list.push(path.join(process.env.CLAUDE_PLUGIN_ROOT, 'skills', mode, 'SKILL.md'));
   list.push(path.join(hooksDir, '..', '..', 'skills', mode, 'SKILL.md')); // repo: src/hooks -> skills
-  list.push(path.join(hooksDir, '..', 'skills', mode, 'SKILL.md'));       // install: steno/hooks -> steno/skills
+  list.push(path.join(hooksDir, '..', 'skills', mode, 'SKILL.md'));       // install: subvocal/hooks -> subvocal/skills
   list.push(path.join(hooksDir, 'skills', mode, 'SKILL.md'));
   return list;
 }
@@ -317,9 +220,9 @@ function loadRuleset(mode, hooksDir) {
     try {
       const body = stripFrontmatter(fs.readFileSync(file, 'utf8'));
       if (body) {
-        // ultrasteno builds on steno: ship both, ultra last so it wins.
-        if (mode === 'ultrasteno') {
-          const base = loadRuleset('steno', hooksDir);
+        // ultrasubvocal builds on subvocal: ship both, ultra last so it wins.
+        if (mode === 'ultrasubvocal') {
+          const base = loadRuleset('subvocal', hooksDir);
           return base ? base + '\n\n---\n\n' + body : body;
         }
         return body;
@@ -330,7 +233,7 @@ function loadRuleset(mode, hooksDir) {
 }
 
 // Used only when no SKILL.md can be found (a partial install). Short, but it
-// carries every hard rule so steno still behaves.
+// carries every hard rule so subvocal still behaves.
 function fallbackRuleset(mode) {
   if (mode === 'lite') {
     return [
@@ -340,11 +243,11 @@ function fallbackRuleset(mode) {
       'Write the reply normally, in the user\'s language.',
     ].join('\n');
   }
-  const ultra = mode === 'ultrasteno'
+  const ultra = mode === 'ultrasubvocal'
     ? '\nULTRA: no # notes, no do: plans, alias at first mention, one-word keys, no articles/pronouns/auxiliary verbs, lines under ~12 tokens.'
     : '';
   return [
-    'Think in steno. Reply in prose.',
+    'Think in subvocal. Reply in prose.',
     'Thinking only: every line is one form: find: | key: value | A := thing | a → b | expr = value | code line | case ... | ? question | !: wrong → fix | check: expr true|false | do: a; b | # note | => result.',
     'Measured 1-token forms: → => = != > < & not in none * / + - true false if else case ==. Banned (2-5 tokens): ∴ ∵ ≠ ≥ ≤ ≈ ∀ ∃ ∈ ∅ ✓ ✗ ¬ ∧ ∨ -> ~ e.g. i.e.',
     'Newline is the only connective. No narration (let me, okay, hmm, the user wants, I think). Aliases: one capital letter; never letter+digit.',
@@ -355,7 +258,7 @@ function fallbackRuleset(mode) {
 }
 
 function rulesetBanner(mode) {
-  return 'STENO MODE ACTIVE: mode ' + mode + '. Steno is a shorthand for your reasoning. Your reply is written normally.';
+  return 'SUBVOCAL MODE ACTIVE: mode ' + mode + '. Subvocal is a shorthand for your reasoning. Your reply is written normally.';
 }
 
 // Lite ships as its bare skill text, nothing added: that exact text is what
@@ -370,8 +273,8 @@ function buildRuleset(mode, hooksDir) {
 // Lite has no per-turn reminder (see buildRuleset); returns null.
 function reminder(mode) {
   if (mode === 'lite') return null;
-  const extra = mode === 'ultrasteno' ? ' Ultra: no notes/plans, alias at first mention, no glue words.' : '';
-  return 'Steno active (' + mode + '). Thinking: steno lines only, measured forms (→ => = != true false ? !: :=), '
+  const extra = mode === 'ultrasubvocal' ? ' Ultra: no notes/plans, alias at first mention, no glue words.' : '';
+  return 'Subvocal active (' + mode + '). Thinking: subvocal lines only, measured forms (→ => = != true false ? !: :=), '
     + 'newline as connective, aliases, no narration, every step and check kept.' + extra
     + ' Shorthand stays legible and complete. Reply: normal prose in the user\'s language, aliases expanded.';
 }
@@ -381,15 +284,7 @@ module.exports = {
   DEFAULT_MODES,
   RULESET_MODES,
   MODE_SKILL,
-  resolveAuto,
   concreteMode,
-  modelFrom,
-  modelFromSettings,
-  modelFromTranscript,
-  setAutoPending,
-  isAutoPending,
-  writeSessionModel,
-  readSessionModel,
   canonicalMode,
   stripJsonComments,
   parseConfigFile,

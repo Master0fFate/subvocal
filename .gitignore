@@ -6,3 +6,4 @@ lexicon/.cache/
 evals/snapshots/*.log
 .env
 .env.local
+.latentcontext/

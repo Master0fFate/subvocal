@@ -1,11 +1,11 @@
-# steno-lexicon
+# subvocal-lexicon
 
-Re-derives the steno lexicon from measurements: mine the phrases your traces
+Re-derives the subvocal lexicon from measurements: mine the phrases your traces
 repeat, measure candidates with a real tokenizer, rebuild the generated block
 in the skills, and verify with the eval. Run it inside a clone of this repo.
 
 ```
-/steno-lexicon
+/subvocal-lexicon
 ```
 
 See [`SKILL.md`](./SKILL.md).

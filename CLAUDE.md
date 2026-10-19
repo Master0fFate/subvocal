@@ -1,16 +1,16 @@
-# Working on steno
+# Working on subvocal
 
-Steno compresses a model's reasoning into measured shorthand while the reply
+Subvocal compresses a model's reasoning into measured shorthand while the reply
 stays normal prose. This file is for anyone (person or agent) changing this
 repository.
 
 ## Layout
 
 ```
-skills/steno/SKILL.md        strict mode: the operative ruleset
-skills/ultrasteno/SKILL.md   tighter variant, layered on steno
-skills/steno-lite/SKILL.md   light mode; the default where strict is declined
-skills/steno-lexicon/        skill that re-runs the lexicon pipeline
+skills/subvocal/SKILL.md        strict mode: the full dialect, opt-in
+skills/ultrasubvocal/SKILL.md   tighter variant, layered on subvocal
+skills/subvocal-lite/SKILL.md   light mode: one measured instruction, the default everywhere
+skills/subvocal-lexicon/        skill that re-runs the lexicon pipeline
 lexicon/candidates.json      concepts, English forms, notation candidates
 lexicon/measured.json        real token counts (generated)
 lexicon/lexicon.json         chosen dialect + every number behind it (generated)
@@ -32,16 +32,11 @@ tests/                       node:test for hooks, unittest for pipeline + scorin
 2. A notation form is kept only when it is strictly cheaper than the median
    English form it replaces. Ties go to plain English.
 3. Prefer code and math idioms over invented abbreviations.
-4. No rule may remove a reasoning step, check or case. Steno compresses
+4. No rule may remove a reasoning step, check or case. Subvocal compresses
    encoding, not content.
 5. No wording that asks the model to hide, disguise or omit reasoning. The
-   legibility rule (rule 11 in `skills/steno/SKILL.md`) is load-bearing, and
+   legibility rule (rule 11 in `skills/subvocal/SKILL.md`) is load-bearing, and
    a test fails if concealment wording appears in injected text.
-6. `steno-lite` ships as the exact text that was tested against the
-   Sonnet 5.5 / Opus 5.5 safeguards. Do not add a banner or reminder to it, and
-   re-run `evals/run.py --arms lite` on those models after any edit. If a
-   change gets declined, revert it; do not reword to get past a safety
-   classifier.
 
 ## Checks
 
@@ -58,5 +53,4 @@ Real evals cost API calls or subscription usage; see `evals/README.md`.
 - All hooks fail open: any error prints nothing and exits 0.
 - Never `process.exit()` after writing stdout (pipes are async).
 - One `hookSpecificOutput` per run.
-- Mode state: `$CLAUDE_CONFIG_DIR/.steno/sessions/<session_id>`; the model
-  seen at session start sits next to it as `<session_id>.model`.
+- Mode state: `$CLAUDE_CONFIG_DIR/.subvocal/sessions/<session_id>`.

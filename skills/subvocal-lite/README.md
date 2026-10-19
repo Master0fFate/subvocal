@@ -1,12 +1,12 @@
-# steno-lite
+# subvocal-lite
 
-Five lines: short draft steps, the cheapest measured notation, one-letter names
-for repeated terms, every step kept, reply normal. Auto mode picks it on models
-whose safeguards decline the strict ruleset, and it ships exactly as tested:
+One instruction: keep internal reasoning concise, leave the reply alone. It is
+the only mode that measured a thinking-token saving at equal accuracy, it is
+accepted by every model tested, and it ships exactly as measured: no heading,
 no banner, no per-turn reminder.
 
 ```
-/steno lite
+/subvocal lite
 ```
 
 See [`SKILL.md`](./SKILL.md) and [`docs/HONEST-NUMBERS.md`](../../docs/HONEST-NUMBERS.md).

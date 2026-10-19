@@ -1,2 +1,2 @@
-@./skills/steno/SKILL.md
-@./skills/ultrasteno/SKILL.md
+@./skills/subvocal/SKILL.md
+@./skills/ultrasubvocal/SKILL.md

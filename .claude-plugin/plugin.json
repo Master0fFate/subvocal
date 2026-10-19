@@ -1,9 +1,9 @@
 {
-  "name": "steno",
+  "name": "subvocal",
   "version": "0.1.0",
-  "description": "Steno thinking: compresses the model's internal reasoning into a measured code/math shorthand. Same reasoning, fewer thinking tokens, reply unchanged.",
+  "description": "Fewer thinking tokens, same answers. One measured instruction keeps a model's internal reasoning concise; the reply is unchanged. The strict shorthand dialect stays opt-in.",
   "author": {
-    "name": "steno contributors"
+    "name": "subvocal contributors"
   },
   "license": "MIT",
   "keywords": [
@@ -19,9 +19,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-activate.js\"",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/subvocal-activate.js\"",
             "timeout": 10,
-            "statusMessage": "Loading steno mode..."
+            "statusMessage": "Loading subvocal mode..."
           }
         ]
       }
@@ -31,9 +31,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-activate.js\" --subagent",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/subvocal-activate.js\" --subagent",
             "timeout": 10,
-            "statusMessage": "Loading steno mode for subagent..."
+            "statusMessage": "Loading subvocal mode for subagent..."
           }
         ]
       }
@@ -43,9 +43,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/steno-mode-tracker.js\"",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); node \"$HOOK_ROOT/src/hooks/subvocal-mode-tracker.js\"",
             "timeout": 10,
-            "statusMessage": "Tracking steno mode..."
+            "statusMessage": "Tracking subvocal mode..."
           }
         ]
       }

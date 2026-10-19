@@ -1,17 +1,17 @@
 ---
-name: steno-lexicon
+name: subvocal-lexicon
 description: >
-  Rebuild steno's measured lexicon for a model: mine the phrases your traces
+  Rebuild subvocal's measured lexicon for a model: mine the phrases your traces
   repeat, measure candidate notation with the real tokenizer, and regenerate
-  the lexicon block in the steno skills. Use for /steno-lexicon, "re-measure
-  steno", "tune steno for my model", "update the steno lexicon".
+  the lexicon block in the subvocal skills. Use for /subvocal-lexicon, "re-measure
+  subvocal", "tune subvocal for my model", "update the subvocal lexicon".
 ---
 
-# steno-lexicon
+# subvocal-lexicon
 
-Steno's rule is tokens, not characters. This skill re-derives the dialect from measurements whenever the model, the tokenizer, or your workload changes. Run the steps yourself with the shell; ask before any step that spends the user's API credit or subscription.
+Subvocal's rule is tokens, not characters. This skill re-derives the dialect from measurements whenever the model, the tokenizer, or your workload changes. Run the steps yourself with the shell; ask before any step that spends the user's API credit or subscription.
 
-All commands run from the root of a steno repository clone. If the current directory is not one, ask the user where their clone is.
+All commands run from the root of a subvocal repository clone. If the current directory is not one, ask the user where their clone is.
 
 ## 1. Mine what your traces repeat
 
@@ -49,7 +49,7 @@ python3 scripts/build_lexicon.py
 python3 scripts/build_lexicon.py --check
 ```
 
-This rewrites `lexicon/lexicon.json` and the block between the `LEXICON` markers in `skills/steno/SKILL.md` and `skills/ultrasteno/SKILL.md`. Never edit that block by hand.
+This rewrites `lexicon/lexicon.json` and the block between the `LEXICON` markers in `skills/subvocal/SKILL.md` and `skills/ultrasubvocal/SKILL.md`. Never edit that block by hand.
 
 ## 5. Verify
 

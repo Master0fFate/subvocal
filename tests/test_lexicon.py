@@ -148,7 +148,7 @@ class Scoring(unittest.TestCase):
         self.assertEqual(eval_run.leaks("Plain answer.\n```\n=> x\nA := y\n```"), [])
         self.assertIn("marker_line", eval_run.leaks("=> the answer"))
         self.assertIn("alias_def", eval_run.leaks("Let Q := the queue"))
-        self.assertIn("mentions_steno", eval_run.leaks("Steno mode on."))
+        self.assertIn("mentions_subvocal", eval_run.leaks("Subvocal mode on."))
 
     def test_prompt_sets_are_well_formed(self):
         for name in ("tasks", "open"):

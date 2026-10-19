@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// steno — Claude Code SessionStart hook (and SubagentStart with --subagent).
+// subvocal — Claude Code SessionStart hook (and SubagentStart with --subagent).
 //
 // SessionStart:
 //   1. Resolve this session's mode. A resumed or compacted session keeps the
 //      mode it had; a new session starts from the configured default, where
-//      'auto' means strict steno on Haiku and lite on other models.
+//      'auto' means lite.
 //   2. Persist it (the prompt hook and the statusline read it).
 //   3. Print the full ruleset (the active skill's SKILL.md) as session context.
 //
 // SubagentStart (--subagent): hand every new subagent the parent session's
-// active ruleset, so delegated work thinks in steno too. Read-only.
+// active ruleset, so delegated work thinks in subvocal too. Read-only.
 //
 // Fail open: any error prints nothing and exits 0. A broken install must
 // never block a session. Never call process.exit() after writing stdout:
@@ -17,8 +17,8 @@
 
 'use strict';
 
-const cfg = require('./steno-config');
-const { readPayload } = require('./steno-parse');
+const cfg = require('./subvocal-config');
+const { readPayload } = require('./subvocal-parse');
 
 async function main() {
   const subagent = process.argv.includes('--subagent');
@@ -39,14 +39,8 @@ async function main() {
   let mode = null;
   if (source === 'resume' || source === 'compact' || source === 'clear') mode = cfg.readSessionMode(undefined, sid);
   const cwd = typeof payload.cwd === 'string' ? payload.cwd : process.cwd();
-  const model = cfg.modelFrom(payload) || cfg.modelFromSettings(cwd) || cfg.readSessionModel(undefined, sid);
-  if (model) cfg.writeSessionModel(undefined, sid, model);
   if (!mode) {
-    const def = cfg.getDefaultMode(cwd);
-    mode = cfg.concreteMode(def, model);
-    // Model unknown yet: start with lite (safe everywhere); the prompt hook
-    // upgrades to strict once the transcript shows a Haiku reply.
-    cfg.setAutoPending(undefined, sid, def === 'auto' && !model);
+    mode = cfg.concreteMode(cfg.getDefaultMode(cwd));
   }
   cfg.writeSessionMode(undefined, sid, mode);
   if (mode === 'off') return;
